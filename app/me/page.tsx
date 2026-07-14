@@ -191,7 +191,7 @@ function MePageInner() {
                   className="inline-flex items-center gap-2 h-10 px-4 rounded-full bg-indigo-600 hover:bg-indigo-500 text-white transition-colors text-[12px] font-bold uppercase tracking-widest shadow-[0_0_15px_rgba(99,102,241,0.4)]"
                 >
                   <UploadCloud className="w-4 h-4" />
-                  Subir documento
+                  Cargar gastos
                 </Link>
               </div>
             </div>
