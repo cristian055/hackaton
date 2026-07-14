@@ -8,16 +8,22 @@ interface HeaderProps {
 
 export function Header({ variant = 'role-selection' }: HeaderProps) {
   return (
-    <header className="bg-transparent border-b border-white/10 flex justify-between items-center w-full px-6 h-16 sticky top-0 z-50">
+    <header className="bg-white border-b border-border flex justify-between items-center w-full px-6 h-16 sticky top-0 z-50">
       <div className="flex items-center gap-4">
-        <Link href="/" className="font-bold text-xl text-white flex items-center">
-          LogiFlow Docs
+        <Link href="/" className="flex items-center">
+          <Image
+            src="/comfama-logo.svg"
+            alt="Comfama"
+            width={143}
+            height={24}
+            priority
+          />
         </Link>
 
         {variant === 'me' && (
           <Link
             href="/"
-            className="hidden md:inline-flex items-center gap-2 text-on-surface-variant hover:text-white transition-colors"
+            className="hidden md:inline-flex items-center gap-2 text-foreground-muted hover:text-foreground transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             <span className="text-[12px] font-semibold uppercase tracking-widest">Volver</span>
@@ -26,40 +32,40 @@ export function Header({ variant = 'role-selection' }: HeaderProps) {
 
         {variant === 'role-selection' && (
           <>
-            <div className="hidden md:flex h-8 w-px bg-outline-variant mx-2"></div>
+            <div className="hidden md:flex h-8 w-px bg-outline mx-2"></div>
             <div className="hidden md:flex items-center gap-6">
               <div className="flex flex-col">
-                <span className="text-[12px] font-semibold text-on-surface-variant uppercase tracking-wider">Empleado</span>
-                <span className="text-sm font-semibold text-on-surface">Juan Pérez</span>
+                <span className="text-[12px] font-semibold text-foreground-muted uppercase tracking-wider">Empleado</span>
+                <span className="text-sm font-semibold text-foreground">Juan Pérez</span>
               </div>
               <div className="flex flex-col">
-                <span className="text-[12px] font-semibold text-on-surface-variant uppercase tracking-wider">Cédula</span>
-                <span className="text-sm font-semibold text-on-surface">12.345.678</span>
+                <span className="text-[12px] font-semibold text-foreground-muted uppercase tracking-wider">Cédula</span>
+                <span className="text-sm font-semibold text-foreground">12.345.678</span>
               </div>
             </div>
           </>
         )}
 
         {variant === 'upload' && (
-          <div className="hidden md:flex items-center h-8 px-4 bg-white/5 border border-white/10 rounded-full ml-6">
-            <Edit className="w-4 h-4 text-outline mr-2" />
-            <span className="text-[12px] font-semibold text-on-surface-variant mr-1">CECO:</span>
+          <div className="hidden md:flex items-center h-8 px-4 bg-surface-muted border border-border rounded-full ml-6">
+            <Edit className="w-4 h-4 text-foreground-muted mr-2" />
+            <span className="text-[12px] font-semibold text-foreground-muted mr-1">CECO:</span>
             <input
               id="logiflow-upload-ceco"
-              className="bg-transparent border-none focus:ring-0 font-mono text-sm text-primary p-0 w-32 outline-none"
+              className="bg-transparent border-none focus:ring-0 font-mono text-sm text-primary p-0 w-32 outline-none tracking-wider"
               spellCheck="false"
               type="text"
               defaultValue="7040-LOG-OPS"
             />
           </div>
         )}
-        
+
         {variant === 'review' && (
            <>
-            <div className="hidden md:flex h-8 w-px bg-outline-variant mx-2"></div>
+            <div className="hidden md:flex h-8 w-px bg-outline mx-2"></div>
             <div className="hidden md:flex flex-col">
-              <span className="text-[12px] font-semibold text-on-surface-variant uppercase tracking-wider">OPERADOR</span>
-              <span className="text-sm font-bold">Juan Pérez <span className="font-normal opacity-70">(ID: 12.345.678)</span></span>
+              <span className="text-[12px] font-semibold text-foreground-muted uppercase tracking-wider">OPERADOR</span>
+              <span className="text-sm font-bold text-foreground">Juan Pérez <span className="font-normal opacity-70">(ID: 12.345.678)</span></span>
             </div>
            </>
         )}
@@ -68,11 +74,11 @@ export function Header({ variant = 'role-selection' }: HeaderProps) {
       <div className="flex items-center gap-6">
         {variant === 'role-selection' && (
           <div className="relative flex flex-col hidden md:flex">
-            <label className="text-[10px] font-semibold text-on-surface-variant absolute -top-2 left-2 px-1 bg-[#09090B]" htmlFor="ceco-input">CECO</label>
-            <input 
-              className="bg-transparent border border-white/10 bg-white/5 rounded-full px-4 py-1 font-mono text-sm text-white focus:ring-2 focus:ring-primary focus:border-primary transition-all w-32 outline-none" 
-              id="ceco-input" 
-              type="text" 
+            <label className="text-[10px] font-semibold text-foreground-muted absolute -top-2 left-2 px-1 bg-white" htmlFor="ceco-input">CECO</label>
+            <input
+              className="bg-surface-muted border border-border rounded-full px-4 py-1 font-mono text-sm text-foreground focus:ring-2 focus:ring-primary focus:border-primary transition-all w-32 outline-none tracking-wider"
+              id="ceco-input"
+              type="text"
               defaultValue="700-OP-24"
             />
           </div>
@@ -80,26 +86,26 @@ export function Header({ variant = 'role-selection' }: HeaderProps) {
 
         {variant === 'upload' && (
           <div className="flex flex-col items-end mr-4 hidden md:flex">
-            <span className="text-[12px] font-bold text-on-surface">Juan Pérez</span>
-            <span className="text-[10px] font-semibold text-on-surface-variant uppercase tracking-wider">ID: 12.345.678</span>
+            <span className="text-[12px] font-bold text-foreground">Juan Pérez</span>
+            <span className="text-[10px] font-semibold text-foreground-muted uppercase tracking-wider">ID: 12.345.678</span>
           </div>
         )}
 
         {variant === 'me' && (
           <div className="flex flex-col items-end mr-4 hidden md:flex">
-            <span className="text-[12px] font-bold text-on-surface">Juan Pérez</span>
-            <span className="text-[10px] font-semibold text-on-surface-variant uppercase tracking-wider">ID: 12.345.678</span>
+            <span className="text-[12px] font-bold text-foreground">Juan Pérez</span>
+            <span className="text-[10px] font-semibold text-foreground-muted uppercase tracking-wider">ID: 12.345.678</span>
           </div>
         )}
 
         {variant === 'review' && (
           <div className="flex flex-col items-end hidden md:flex">
-            <label className="text-[12px] font-semibold text-on-surface-variant" htmlFor="ceco-edit">CECO</label>
+            <label className="text-[12px] font-semibold text-foreground-muted" htmlFor="ceco-edit">CECO</label>
             <div className="flex items-center gap-1">
-              <input 
-                className="bg-transparent border-none p-0 text-sm font-bold text-primary text-right focus:ring-0 focus:border-b focus:border-primary w-24 outline-none" 
-                id="ceco-edit" 
-                type="text" 
+              <input
+                className="bg-transparent border-none p-0 text-sm font-bold text-primary text-right focus:ring-0 focus:border-b focus:border-primary w-24 outline-none"
+                id="ceco-edit"
+                type="text"
                 defaultValue="AR-992-LOG"
               />
               <Edit className="w-3 h-3 opacity-40" />
@@ -108,14 +114,14 @@ export function Header({ variant = 'role-selection' }: HeaderProps) {
         )}
 
         <div className="flex items-center gap-2">
-          <button className="p-2 rounded-full hover:bg-surface-container-low transition-colors text-on-surface-variant relative">
+          <button className="p-2 rounded-full hover:bg-surface-muted transition-colors text-foreground-muted relative">
             <Bell className="w-5 h-5" />
             {variant === 'review' && <span className="absolute top-2 right-2 w-2 h-2 bg-error rounded-full"></span>}
           </button>
-          <button className="p-2 rounded-full hover:bg-surface-container-low transition-colors text-on-surface-variant">
+          <button className="p-2 rounded-full hover:bg-surface-muted transition-colors text-foreground-muted">
             <HelpCircle className="w-5 h-5" />
           </button>
-          <Link href="/me" className="w-9 h-9 rounded-full border border-outline-variant overflow-hidden ml-2 bg-primary-container flex items-center justify-center">
+          <Link href="/me" className="w-9 h-9 rounded-full border border-outline overflow-hidden ml-2 bg-surface-muted flex items-center justify-center">
              <Image
                src="https://picsum.photos/seed/user/100/100"
                alt="User profile"

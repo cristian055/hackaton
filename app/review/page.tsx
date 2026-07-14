@@ -103,67 +103,63 @@ function ReviewPageInner() {
   return (
     <>
       <Header variant="review" />
-      <main className="flex-1 flex flex-col md:flex-row h-[calc(100vh-64px)] overflow-hidden bg-[#09090B] p-4 gap-4">
-        <section className="hidden md:flex flex-1 bg-[#141417] border border-white/10 rounded-[32px] flex-col relative overflow-hidden">
-          <div className="bg-white/5 border-b border-white/10 text-white px-6 py-4 flex justify-between items-center">
+      <main className="flex-1 flex flex-col md:flex-row h-[calc(100vh-64px)] overflow-hidden bg-surface-muted p-4 gap-4">
+        <section className="hidden md:flex flex-1 bg-white border border-border rounded-2xl flex-col relative overflow-hidden">
+          <div className="bg-surface-muted border-b border-border text-foreground px-6 py-4 flex justify-between items-center">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-xl bg-indigo-500/20 flex items-center justify-center">
-                <FileText className="w-4 h-4 text-indigo-400" />
+              <div className="w-8 h-8 rounded-xl bg-primary-container flex items-center justify-center">
+                <FileText className="w-4 h-4 text-primary" />
               </div>
-              <span className="text-xs font-bold uppercase tracking-widest text-white/80">{doc ? doc.fileName : 'FACTURA_TRANSPORTE_00283.PDF'}</span>
+              <span className="text-xs font-bold uppercase tracking-widest text-foreground">{doc ? doc.fileName : 'FACTURA_TRANSPORTE_00283.PDF'}</span>
             </div>
             <div className="flex gap-2">
-              <button className="p-2 hover:bg-white/10 rounded-full transition-colors"><ZoomIn className="w-4 h-4" /></button>
-              <button className="p-2 hover:bg-white/10 rounded-full transition-colors"><ZoomOut className="w-4 h-4" /></button>
-              <button className="p-2 hover:bg-white/10 rounded-full transition-colors"><RotateCw className="w-4 h-4" /></button>
+              <button className="p-2 hover:bg-surface-muted rounded-full transition-colors"><ZoomIn className="w-4 h-4 text-foreground-muted" /></button>
+              <button className="p-2 hover:bg-surface-muted rounded-full transition-colors"><ZoomOut className="w-4 h-4 text-foreground-muted" /></button>
+              <button className="p-2 hover:bg-surface-muted rounded-full transition-colors"><RotateCw className="w-4 h-4 text-foreground-muted" /></button>
             </div>
           </div>
           <div
-            className="flex-1 flex items-center justify-center p-8 overflow-auto"
-            style={{
-              backgroundImage: 'radial-gradient(rgba(255,255,255,0.1) 1px, transparent 1px)',
-              backgroundSize: '24px 24px'
-            }}
+            className="flex-1 flex items-center justify-center p-8 overflow-auto bg-surface-muted"
           >
-            <div className="bg-white shadow-2xl w-full max-w-2xl aspect-[1/1.41] p-8 flex flex-col gap-6 border border-outline text-[#191c1e]">
-              <div className="flex justify-between items-start border-b border-gray-200 pb-4">
+            <div className="bg-white shadow-[0_8px_24px_rgba(48,48,48,0.14)] w-full max-w-2xl aspect-[1/1.41] p-8 flex flex-col gap-6 border border-border text-[#191c1e]">
+              <div className="flex justify-between items-start border-b border-border pb-4">
                 <div className="space-y-2">
-                  <div className="h-8 w-32 bg-gray-100 rounded"></div>
-                  <div className="h-4 w-48 bg-gray-50 rounded"></div>
+                  <div className="h-8 w-32 bg-neutral rounded"></div>
+                  <div className="h-4 w-48 bg-surface-muted rounded"></div>
                 </div>
                 <div className="text-right">
                   <p className="font-bold text-lg">FACTURA</p>
-                  <p className="text-gray-400">N° {fields.nroFactura || '0001-00002834'}</p>
+                  <p className="text-foreground-muted">N° {fields.nroFactura || '0001-00002834'}</p>
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-8">
                 <div className="space-y-4">
-                  <div className="h-3 w-full bg-gray-50 rounded"></div>
-                  <div className="h-3 w-3/4 bg-gray-50 rounded"></div>
-                  <div className="h-3 w-5/6 bg-gray-50 rounded"></div>
+                  <div className="h-3 w-full bg-surface-muted rounded"></div>
+                  <div className="h-3 w-3/4 bg-surface-muted rounded"></div>
+                  <div className="h-3 w-5/6 bg-surface-muted rounded"></div>
                 </div>
                 <div className="space-y-4">
-                  <div className="h-3 w-full bg-gray-50 rounded"></div>
-                  <div className="h-3 w-3/4 bg-gray-50 rounded"></div>
-                  <div className="h-3 w-5/6 bg-gray-50 rounded"></div>
+                  <div className="h-3 w-full bg-surface-muted rounded"></div>
+                  <div className="h-3 w-3/4 bg-surface-muted rounded"></div>
+                  <div className="h-3 w-5/6 bg-surface-muted rounded"></div>
                 </div>
               </div>
-              <div className="flex-1 border-y border-gray-100 py-4 mt-8">
+              <div className="flex-1 border-y border-border py-4 mt-8">
                 <table className="w-full text-xs text-left">
                   <thead>
-                    <tr className="border-b border-gray-200">
+                    <tr className="border-b border-border">
                       <th className="pb-2">DESCRIPCIÓN</th>
                       <th className="pb-2 text-right">CANT.</th>
                       <th className="pb-2 text-right">SUBTOTAL</th>
                     </tr>
                   </thead>
                   <tbody>
-                    <tr className="border-b border-gray-50">
+                    <tr className="border-b border-surface-muted">
                       <td className="py-2">Servicio Flete Larga Distancia</td>
                       <td className="py-2 text-right">1</td>
                       <td className="py-2 text-right">$450.000,00</td>
                     </tr>
-                    <tr className="border-b border-gray-50">
+                    <tr className="border-b border-surface-muted">
                       <td className="py-2">Peajes Consolidado</td>
                       <td className="py-2 text-right">1</td>
                       <td className="py-2 text-right">$12.500,00</td>
@@ -174,33 +170,32 @@ function ReviewPageInner() {
               <div className="flex justify-end pt-4">
                 <div className="w-1/2 space-y-2">
                   <div className="flex justify-between"><span className="text-[12px] font-semibold">IVA (21%):</span><span className="font-mono text-[13px]">$97.125,00</span></div>
-                  <div className="flex justify-between border-t border-gray-300 pt-2"><span className="font-bold">TOTAL:</span><span className="font-bold font-mono text-[13px]">${fields.monto || '559.625,00'}</span></div>
+                  <div className="flex justify-between border-t border-border pt-2"><span className="font-bold">TOTAL:</span><span className="font-bold font-mono text-[13px]">${fields.monto || '559.625,00'}</span></div>
                 </div>
               </div>
             </div>
           </div>
         </section>
 
-        <section className="w-full md:w-[480px] bg-[#141417] border border-white/10 rounded-[32px] overflow-y-auto flex flex-col relative">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-600/10 blur-[100px] pointer-events-none"></div>
-          <div className="p-8 border-b border-white/10 bg-white/5 relative z-10">
+        <section className="w-full md:w-[480px] bg-white border border-border rounded-2xl overflow-y-auto flex flex-col relative">
+          <div className="p-8 border-b border-border bg-surface-muted relative z-10">
             <div className="flex items-center gap-3 mb-2">
-              <div className="w-10 h-10 bg-white/5 rounded-2xl flex items-center justify-center text-indigo-500">
+              <div className="w-10 h-10 bg-primary-container rounded-2xl flex items-center justify-center text-primary">
                 <Edit className="w-5 h-5" />
               </div>
-              <h1 className="text-2xl font-light text-white">Revisión de <span className="font-semibold">Datos</span></h1>
+              <h1 className="text-2xl font-light text-foreground">Revisión de <span className="font-semibold">Datos</span></h1>
             </div>
-            <p className="text-sm text-white/40">Verifique la información extraída automáticamente antes de confirmar.</p>
+            <p className="text-sm text-foreground-muted">Verifique la información extraída automáticamente antes de confirmar.</p>
           </div>
 
           <form className="flex-1 p-6 space-y-6" onSubmit={(e) => e.preventDefault()}>
             <div className="space-y-4 relative z-10">
-              <h3 className="text-[10px] font-bold text-indigo-400 uppercase tracking-widest">Identificación del Documento</h3>
+              <h3 className="text-[10px] font-bold text-primary uppercase tracking-widest">Identificación del Documento</h3>
               <div className="grid grid-cols-2 gap-4">
                 <div className="flex flex-col gap-2 group">
-                  <label className="text-[12px] font-semibold text-white/60" htmlFor="fecha">Fecha de Emisión</label>
+                  <label className="text-[12px] font-semibold text-foreground-muted" htmlFor="fecha">Fecha de Emisión</label>
                   <input
-                    className="bg-white/5 border border-white/10 p-3 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm w-full transition-all group-focus-within:bg-white/10 outline-none text-white color-scheme-dark"
+                    className="bg-white border border-border p-3 rounded-xl focus:ring-2 focus:ring-help focus:border-help text-sm w-full transition-all outline-none text-foreground"
                     id="fecha"
                     type="date"
                     value={fields.fecha}
@@ -208,48 +203,48 @@ function ReviewPageInner() {
                   />
                 </div>
                 <div className="flex flex-col gap-2 group">
-                  <label className="text-[12px] font-semibold text-white/60" htmlFor="nro_factura">Número de Factura</label>
+                  <label className="text-[12px] font-semibold text-foreground-muted" htmlFor="nro_factura">Número de Factura</label>
                   <input
-                    className="bg-white/5 border border-white/10 p-3 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 font-mono text-sm w-full transition-all group-focus-within:bg-white/10 outline-none text-white"
+                    className="bg-white border border-border p-3 rounded-xl focus:ring-2 focus:ring-help focus:border-help font-mono text-sm w-full transition-all outline-none text-foreground"
                     id="nro_factura"
                     type="text"
                     value={fields.nroFactura}
                     onChange={(e) => updateField('nroFactura', e.target.value)}
                   />
                 </div>
+                              <div className="flex flex-col gap-2 group">
+                <label className="text-[12px] font-semibold text-foreground-muted" htmlFor="cliente">Cliente</label>
+                <input
+                  className="bg-white border border-border p-3 rounded-xl focus:ring-2 focus:ring-help focus:border-help font-mono text-sm w-full transition-all outline-none text-foreground"
+                  id="cliente"
+                  type="text"
+                  value={fields.cliente}
+                  onChange={(e) => updateField('cliente', e.target.value)}
+                />
+              </div>
               </div>
             </div>
 
-            <div className="space-y-4 pt-6 border-t border-white/10 relative z-10">
-              <h3 className="text-[10px] font-bold text-indigo-400 uppercase tracking-widest">Detalles del Emisor</h3>
+            <div className="space-y-4 pt-6 border-t border-border relative z-10">
+              <h3 className="text-[10px] font-bold text-primary uppercase tracking-widest">Detalles del Emisor</h3>
               <div className="flex flex-col gap-2 group">
-                <label className="text-[12px] font-semibold text-white/60" htmlFor="proveedor">Proveedor</label>
-                <div className="relative transition-all group-focus-within:bg-white/10 rounded-xl">
+                <label className="text-[12px] font-semibold text-foreground-muted" htmlFor="proveedor">Proveedor</label>
+                <div className="relative rounded-xl">
                   <input
-                    className="bg-white/5 border border-white/10 p-3 pr-10 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm w-full outline-none text-white"
+                    className="bg-white border border-border p-3 pr-10 rounded-xl focus:ring-2 focus:ring-help focus:border-help text-sm w-full outline-none text-foreground"
                     id="proveedor"
                     type="text"
                     value={fields.proveedor}
                     onChange={(e) => updateField('proveedor', e.target.value)}
                   />
-                  <Search className="w-5 h-5 absolute right-3 top-1/2 -translate-y-1/2 text-indigo-400" />
+                  <Search className="w-5 h-5 absolute right-3 top-1/2 -translate-y-1/2 text-foreground-muted" />
                 </div>
-                <p className="text-[11px] text-green-400/80 mt-1 flex items-center gap-1"><CheckCircle className="w-3 h-3"/> CUIT: {fields.cuit || DEMO_FIELDS.cuit} • Proveedor Verificado</p>
               </div>
+
               <div className="flex flex-col gap-2 group">
-                <label className="text-[12px] font-semibold text-white/60" htmlFor="cuit">CUIT</label>
+                <label className="text-[12px] font-semibold text-foreground-muted" htmlFor="nit">NIT</label>
                 <input
-                  className="bg-white/5 border border-white/10 p-3 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 font-mono text-sm w-full transition-all group-focus-within:bg-white/10 outline-none text-white"
-                  id="cuit"
-                  type="text"
-                  value={fields.cuit}
-                  onChange={(e) => updateField('cuit', e.target.value)}
-                />
-              </div>
-              <div className="flex flex-col gap-2 group">
-                <label className="text-[12px] font-semibold text-white/60" htmlFor="nit">NIT</label>
-                <input
-                  className="bg-white/5 border border-white/10 p-3 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 font-mono text-sm w-full transition-all group-focus-within:bg-white/10 outline-none text-white"
+                  className="bg-white border border-border p-3 rounded-xl focus:ring-2 focus:ring-help focus:border-help font-mono text-sm w-full transition-all outline-none text-foreground"
                   id="nit"
                   type="text"
                   value={fields.nit}
@@ -258,12 +253,11 @@ function ReviewPageInner() {
               </div>
             </div>
 
-            <div className="space-y-4 pt-6 border-t border-white/10 relative z-10">
-              <h3 className="text-[10px] font-bold text-indigo-400 uppercase tracking-widest">Ubicación y Contacto</h3>
+            <div className="space-y-4 pt-6 border-t border-border relative z-10">
               <div className="flex flex-col gap-2 group">
-                <label className="text-[12px] font-semibold text-white/60" htmlFor="direccion">Dirección</label>
+                <label className="text-[12px] font-semibold text-foreground-muted" htmlFor="direccion">Dirección</label>
                 <input
-                  className="bg-white/5 border border-white/10 p-3 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm w-full transition-all group-focus-within:bg-white/10 outline-none text-white"
+                  className="bg-white border border-border p-3 rounded-xl focus:ring-2 focus:ring-help focus:border-help text-sm w-full transition-all outline-none text-foreground"
                   id="direccion"
                   type="text"
                   value={fields.direccion}
@@ -271,9 +265,9 @@ function ReviewPageInner() {
                 />
               </div>
               <div className="flex flex-col gap-2 group">
-                <label className="text-[12px] font-semibold text-white/60" htmlFor="telefono">Teléfono</label>
+                <label className="text-[12px] font-semibold text-foreground-muted" htmlFor="telefono">Teléfono</label>
                 <input
-                  className="bg-white/5 border border-white/10 p-3 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 font-mono text-sm w-full transition-all group-focus-within:bg-white/10 outline-none text-white"
+                  className="bg-white border border-border p-3 rounded-xl focus:ring-2 focus:ring-help focus:border-help font-mono text-sm w-full transition-all outline-none text-foreground"
                   id="telefono"
                   type="text"
                   value={fields.telefono}
@@ -282,32 +276,9 @@ function ReviewPageInner() {
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="flex flex-col gap-2 group">
-                  <label className="text-[12px] font-semibold text-white/60" htmlFor="monto">Monto Total ($)</label>
+                  <label className="text-[12px] font-semibold text-foreground-muted" htmlFor="departamento">Departamento</label>
                   <input
-                    className="bg-white/5 border border-white/10 p-3 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 font-mono text-sm w-full transition-all group-focus-within:bg-white/10 outline-none text-white"
-                    id="monto"
-                    type="text"
-                    value={fields.monto}
-                    onChange={(e) => updateField('monto', e.target.value)}
-                  />
-                </div>
-                <div className="flex flex-col gap-2 group">
-                  <label className="text-[12px] font-semibold text-white/60" htmlFor="kilometraje">Kilometraje</label>
-                  <div className="relative transition-all group-focus-within:bg-white/10 rounded-xl">
-                    <input
-                      className="bg-white/5 border border-white/10 p-3 pr-10 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 font-mono text-sm w-full outline-none text-white"
-                      id="kilometraje"
-                      type="number"
-                      value={fields.kilometraje}
-                      onChange={(e) => updateField('kilometraje', e.target.value)}
-                    />
-                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[12px] font-bold text-white/40">KM</span>
-                  </div>
-                </div>
-                <div className="flex flex-col gap-2 group">
-                  <label className="text-[12px] font-semibold text-white/60" htmlFor="departamento">Departamento</label>
-                  <input
-                    className="bg-white/5 border border-white/10 p-3 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm w-full transition-all group-focus-within:bg-white/10 outline-none text-white"
+                    className="bg-white border border-border p-3 rounded-xl focus:ring-2 focus:ring-help focus:border-help text-sm w-full transition-all outline-none text-foreground"
                     id="departamento"
                     type="text"
                     value={fields.departamento}
@@ -315,9 +286,9 @@ function ReviewPageInner() {
                   />
                 </div>
                 <div className="flex flex-col gap-2 group">
-                  <label className="text-[12px] font-semibold text-white/60" htmlFor="municipio">Municipio</label>
+                  <label className="text-[12px] font-semibold text-foreground-muted" htmlFor="municipio">Municipio</label>
                   <input
-                    className="bg-white/5 border border-white/10 p-3 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm w-full transition-all group-focus-within:bg-white/10 outline-none text-white"
+                    className="bg-white border border-border p-3 rounded-xl focus:ring-2 focus:ring-help focus:border-help text-sm w-full transition-all outline-none text-foreground"
                     id="municipio"
                     type="text"
                     value={fields.municipio}
@@ -325,32 +296,20 @@ function ReviewPageInner() {
                   />
                 </div>
               </div>
-              <div className="flex flex-col gap-2 group">
-                <label className="text-[12px] font-semibold text-white/60" htmlFor="ceco-form">CECO</label>
-                <input
-                  id="ceco-form"
-                  className="bg-white/5 border border-white/10 p-3 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 font-mono text-sm w-full transition-all group-focus-within:bg-white/10 outline-none text-white"
-                  type="text"
-                  value={ceco}
-                  onChange={(e) => setCeco(e.target.value)}
-                  placeholder="Ej: 7040-LOG-OPS"
-                />
-              </div>
             </div>
 
-<div className="space-y-4 pt-6 border-t border-white/10 relative z-10">
-              <h3 className="text-[10px] font-bold text-indigo-400 uppercase tracking-widest">Valores e Impuestos</h3>
-              <div className="bg-white/5 border border-white/10 rounded-2xl divide-y divide-white/5">
+<div className="space-y-4 pt-6 border-t border-border relative z-10">
+              <h3 className="text-[10px] font-bold text-primary uppercase tracking-widest">Valores e Impuestos</h3>
+              <div className="bg-surface-muted border border-border rounded-2xl divide-y divide-border">
                 <div className="p-4 space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-[12px] font-bold text-white">Tarifa General (19%)</span>
-                    <span className="text-[10px] font-semibold text-indigo-400 uppercase tracking-widest">Bienes</span>
+                    <span className="text-[12px] font-bold text-foreground">IVA</span>
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     <div className="flex flex-col gap-1">
-                      <label className="text-[10px] font-semibold text-white/40 uppercase tracking-widest" htmlFor="iva19_base">Base Gravada</label>
+                      <label className="text-[10px] font-semibold text-foreground-muted uppercase tracking-widest" htmlFor="iva19_base">Base Gravada</label>
                       <input
-                        className="bg-white/5 border border-white/10 p-2 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 font-mono text-xs w-full outline-none text-white"
+                        className="bg-white border border-border p-2 rounded-lg focus:ring-2 focus:ring-help focus:border-help font-mono text-xs w-full outline-none text-foreground"
                         id="iva19_base"
                         type="text"
                         value={fields.iva19Base}
@@ -358,9 +317,9 @@ function ReviewPageInner() {
                       />
                     </div>
                     <div className="flex flex-col gap-1">
-                      <label className="text-[10px] font-semibold text-white/40 uppercase tracking-widest" htmlFor="iva19_valor">IVA</label>
+                      <label className="text-[10px] font-semibold text-foreground-muted uppercase tracking-widest" htmlFor="iva19_valor">IVA</label>
                       <input
-                        className="bg-white/5 border border-white/10 p-2 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 font-mono text-xs w-full outline-none text-white"
+                        className="bg-white border border-border p-2 rounded-lg focus:ring-2 focus:ring-help focus:border-help font-mono text-xs w-full outline-none text-foreground"
                         id="iva19_valor"
                         type="text"
                         value={fields.iva19Valor}
@@ -371,14 +330,13 @@ function ReviewPageInner() {
                 </div>
                 <div className="p-4 space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-[12px] font-bold text-white">Tarifa Diferencial (5%)</span>
-                    <span className="text-[10px] font-semibold text-indigo-400 uppercase tracking-widest">Agro / Salud</span>
+                    <span className="text-[12px] font-bold text-foreground">IPO consumo (8%)</span>
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     <div className="flex flex-col gap-1">
-                      <label className="text-[10px] font-semibold text-white/40 uppercase tracking-widest" htmlFor="iva5_base">Base Gravada</label>
+                      <label className="text-[10px] font-semibold text-foreground-muted uppercase tracking-widest" htmlFor="iva5_base">Base Gravada</label>
                       <input
-                        className="bg-white/5 border border-white/10 p-2 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 font-mono text-xs w-full outline-none text-white"
+                        className="bg-white border border-border p-2 rounded-lg focus:ring-2 focus:ring-help focus:border-help font-mono text-xs w-full outline-none text-foreground"
                         id="iva5_base"
                         type="text"
                         value={fields.iva5Base}
@@ -386,9 +344,9 @@ function ReviewPageInner() {
                       />
                     </div>
                     <div className="flex flex-col gap-1">
-                      <label className="text-[10px] font-semibold text-white/40 uppercase tracking-widest" htmlFor="iva5_valor">IVA</label>
+                      <label className="text-[10px] font-semibold text-foreground-muted uppercase tracking-widest" htmlFor="iva5_valor">IVA</label>
                       <input
-                        className="bg-white/5 border border-white/10 p-2 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 font-mono text-xs w-full outline-none text-white"
+                        className="bg-white border border-border p-2 rounded-lg focus:ring-2 focus:ring-help focus:border-help font-mono text-xs w-full outline-none text-foreground"
                         id="iva5_valor"
                         type="text"
                         value={fields.iva5Valor}
@@ -399,14 +357,13 @@ function ReviewPageInner() {
                 </div>
                 <div className="p-4 space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-[12px] font-bold text-white">Tarifa Exentos (0%)</span>
-                    <span className="text-[10px] font-semibold text-indigo-400 uppercase tracking-widest">Canasta</span>
+                    <span className="text-[12px] font-bold text-foreground">Tarifa Exentos (0%)</span>
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     <div className="flex flex-col gap-1">
-                      <label className="text-[10px] font-semibold text-white/40 uppercase tracking-widest" htmlFor="iva0_base">Base Gravada</label>
+                      <label className="text-[10px] font-semibold text-foreground-muted uppercase tracking-widest" htmlFor="iva0_base">Base Gravada</label>
                       <input
-                        className="bg-white/5 border border-white/10 p-2 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 font-mono text-xs w-full outline-none text-white"
+                        className="bg-white border border-border p-2 rounded-lg focus:ring-2 focus:ring-help focus:border-help font-mono text-xs w-full outline-none text-foreground"
                         id="iva0_base"
                         type="text"
                         value={fields.iva0Base}
@@ -414,9 +371,9 @@ function ReviewPageInner() {
                       />
                     </div>
                     <div className="flex flex-col gap-1">
-                      <label className="text-[10px] font-semibold text-white/40 uppercase tracking-widest" htmlFor="iva0_valor">IVA</label>
+                      <label className="text-[10px] font-semibold text-foreground-muted uppercase tracking-widest" htmlFor="iva0_valor">IVA</label>
                       <input
-                        className="bg-white/5 border border-white/10 p-2 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 font-mono text-xs w-full outline-none text-white"
+                        className="bg-white border border-border p-2 rounded-lg focus:ring-2 focus:ring-help focus:border-help font-mono text-xs w-full outline-none text-foreground"
                         id="iva0_valor"
                         type="text"
                         value={fields.iva0Valor}
@@ -426,10 +383,20 @@ function ReviewPageInner() {
                   </div>
                 </div>
               </div>
-              <div className="flex flex-col gap-2 group">
-                <label className="text-[12px] font-semibold text-white/60" htmlFor="total_factura">Total Factura</label>
+                            <div className="flex flex-col gap-2 group">
+                <label className="text-[12px] font-semibold text-foreground-muted" htmlFor="total_factura">Propina</label>
                 <input
-                  className="bg-white/5 border border-indigo-500/30 p-3 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 font-mono text-sm w-full transition-all group-focus-within:bg-white/10 outline-none text-white"
+                  className="bg-white border border-border p-3 rounded-xl focus:ring-2 focus:ring-help focus:border-help font-mono text-sm w-full transition-all outline-none text-foreground"
+                  id="total_factura"
+                  type="text"
+                  value={fields.totalFactura}
+                  onChange={(e) => updateField('totalFactura', e.target.value)}
+                />
+              </div>
+              <div className="flex flex-col gap-2 group">
+                <label className="text-[12px] font-semibold text-foreground-muted" htmlFor="total_factura">Total Factura</label>
+                <input
+                  className="bg-white border border-border p-3 rounded-xl focus:ring-2 focus:ring-help focus:border-help font-mono text-sm w-full transition-all outline-none text-foreground"
                   id="total_factura"
                   type="text"
                   value={fields.totalFactura}
@@ -437,23 +404,23 @@ function ReviewPageInner() {
                 />
               </div>
             </div>
-            <div className="bg-indigo-500/10 border border-indigo-500/20 p-4 rounded-2xl flex gap-4 items-start relative z-10">
-              <Info className="w-5 h-5 text-indigo-400 flex-shrink-0 mt-0.5" />
+            <div className="bg-primary-container border border-primary/20 p-4 rounded-2xl flex gap-4 items-start relative z-10">
+              <Info className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
               <div>
-                <p className="text-[12px] text-white font-bold">Validación de Datos</p>
-                <p className="text-xs text-white/60 mt-1">3 tarifas de IVA detectadas. NIT validado contra registro mercantil. Total y bases gravadas reconcilian con el documento.</p>
+                <p className="text-[12px] text-foreground font-bold">Validación de Datos</p>
+                <p className="text-xs text-foreground-muted mt-1">3 tarifas de IVA detectadas. NIT validado contra registro mercantil. Total y bases gravadas reconcilian con el documento.</p>
               </div>
             </div>
           </form>
 
-          <div className="p-6 bg-white/5 border-t border-white/10 space-y-3 sticky bottom-0 backdrop-blur-xl relative z-10">
+          <div className="p-6 bg-white border-t border-border space-y-3 sticky bottom-0 relative z-10">
             <button
               onClick={handleConfirm}
               disabled={isProcessing || isConfirmed}
               className={`w-full py-4 text-[12px] font-bold uppercase tracking-widest transition-all active:scale-[0.98] rounded-xl flex justify-center items-center gap-2
                 ${isConfirmed
-                  ? 'bg-green-500 text-black'
-                  : 'bg-indigo-600 text-white hover:bg-indigo-500 shadow-[0_0_15px_rgba(99,102,241,0.5)]'}
+                  ? 'bg-help text-on-help'
+                  : 'bg-primary text-primary-foreground hover:opacity-90'}
                 ${isProcessing ? 'opacity-70 cursor-wait' : ''}
               `}
             >
@@ -476,7 +443,7 @@ function ReviewPageInner() {
             </button>
             <button
               onClick={() => router.push('/upload')}
-              className="w-full bg-transparent border border-white/10 text-white py-4 text-[12px] font-semibold uppercase tracking-widest hover:bg-white/5 transition-all active:scale-[0.98] rounded-xl flex justify-center items-center gap-2"
+              className="w-full bg-transparent border border-border text-foreground py-4 text-[12px] font-semibold uppercase tracking-widest hover:bg-surface-muted transition-all active:scale-[0.98] rounded-xl flex justify-center items-center gap-2"
             >
               <FileUp className="w-4 h-4" />
               Subir otro documento
@@ -486,11 +453,11 @@ function ReviewPageInner() {
       </main>
 
       <div
-        className={`fixed left-1/2 -translate-x-1/2 bg-inverse-surface text-inverse-on-surface px-8 py-4 rounded-full shadow-xl flex items-center gap-4 transition-all duration-500 pointer-events-none z-[100]
+        className={`fixed left-1/2 -translate-x-1/2 bg-foreground text-primary-foreground px-8 py-4 rounded-full shadow-[0_8px_24px_rgba(48,48,48,0.14)] flex items-center gap-4 transition-all duration-500 pointer-events-none z-[100]
           ${showToast ? 'opacity-100 bottom-8' : 'opacity-0 bottom-5'}
         `}
       >
-        <CheckCircle className="w-6 h-6 text-green-400" />
+        <CheckCircle className="w-6 h-6 text-primary" />
         <span className="text-sm">Datos procesados correctamente</span>
       </div>
     </>
@@ -501,8 +468,8 @@ function ReviewFallback() {
   return (
     <>
       <Header variant="review" />
-      <main className="flex-1 flex items-center justify-center bg-[#09090B] p-4">
-        <div className="text-on-surface-variant text-sm">Cargando revisión…</div>
+      <main className="flex-1 flex items-center justify-center bg-surface-muted p-4">
+        <div className="text-foreground-muted text-sm">Cargando revisión…</div>
       </main>
     </>
   );
