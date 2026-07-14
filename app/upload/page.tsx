@@ -63,41 +63,39 @@ export default function UploadPage() {
   return (
     <>
       <Header variant="upload" />
-      <main className="flex-grow pt-8 pb-32 px-6 flex flex-col items-center justify-center bg-background">
+      <main className="flex-grow pt-8 pb-32 px-6 flex flex-col items-center justify-center bg-surface-muted">
         <div className="w-full max-w-4xl space-y-8">
           <div className="text-center space-y-2">
             <h1 className="text-2xl font-semibold text-primary">Extracción de Documentos</h1>
-            <p className="text-base text-secondary">Suba los documentos para la extracción de datos</p>
+            <p className="text-base text-foreground-muted">Suba los documentos para la extracción de datos</p>
           </div>
 
-          <div className="h-[480px] border rounded-[32px] bg-[#141417] flex flex-col items-center justify-center transition-all duration-300 relative group cursor-pointer overflow-hidden border-white/10 hover:border-indigo-400 ${
-            isDragging ? '!border-indigo-500 !bg-white/5' : (file ? '!border-indigo-500' : '')
-          }"
+          <div className={`h-[480px] border rounded-2xl bg-white flex flex-col items-center justify-center transition-all duration-300 relative group cursor-pointer overflow-hidden border-border hover:border-primary ${
+            isDragging ? '!border-primary !bg-primary-container' : (file ? '!border-primary' : '')
+          }`}
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
             onClick={() => !file && fileInputRef.current?.click()}
           >
-            <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-600/10 blur-[100px] pointer-events-none"></div>
-
             {!file ? (
               <>
-                <div className="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center mb-6 transition-transform group-hover:scale-110 text-indigo-500">
+                <div className="w-16 h-16 bg-primary-container rounded-2xl flex items-center justify-center mb-6 transition-transform group-hover:scale-110 text-primary">
                   <UploadCloud className="w-8 h-8" />
                 </div>
-                <h3 className="text-2xl font-light text-white mb-1">Arrastre y <span className="font-semibold">Suelte</span></h3>
-                <p className="text-sm text-white/40 text-center px-8 max-w-md mt-2">
+                <h3 className="text-2xl font-light text-foreground mb-1">Arrastre y <span className="font-semibold">Suelte</span></h3>
+                <p className="text-sm text-foreground-muted text-center px-8 max-w-md mt-2">
                   Seleccione archivos de su ordenador o arrástrelos directamente a esta zona para comenzar el procesamiento industrial.
                 </p>
               </>
             ) : (
               <div className="w-full max-w-md px-6 z-10" onClick={(e) => e.stopPropagation()}>
-                <div className="bg-surface-container-low border border-outline-variant rounded p-2 flex items-center gap-4">
+                <div className="bg-surface-muted border border-outline rounded-md p-3 flex items-center gap-4">
                   <FileText className="w-6 h-6 text-primary" />
-                  <span className="font-mono text-sm flex-grow truncate text-on-surface">{file.name}</span>
+                  <span className="font-mono text-sm flex-grow truncate text-foreground">{file.name}</span>
                   <button
                     onClick={() => setFile(null)}
-                    className="text-error hover:bg-error-container p-1 rounded transition-colors"
+                    className="text-error hover:bg-primary-container p-1 rounded transition-colors"
                   >
                     <X className="w-5 h-5" />
                   </button>
@@ -115,25 +113,25 @@ export default function UploadPage() {
         </div>
       </main>
 
-      <footer className="fixed bottom-6 left-1/2 -translate-x-1/2 w-[calc(100%-3rem)] max-w-4xl bg-[#141417]/80 backdrop-blur-xl border border-white/10 h-20 flex items-center justify-center px-6 z-50 rounded-full shadow-[0_8px_32px_rgba(0,0,0,0.4)]">
+      <footer className="fixed bottom-6 left-1/2 -translate-x-1/2 w-[calc(100%-3rem)] max-w-4xl bg-white border border-border h-20 flex items-center justify-center px-6 z-50 rounded-full shadow-[0_8px_24px_rgba(48,48,48,0.14)]">
         <div className="w-full flex items-center justify-between">
-          <div className="hidden md:flex items-center gap-2 text-white/60">
-            <ShieldCheck className="w-5 h-5 text-indigo-400" />
+          <div className="hidden md:flex items-center gap-2 text-foreground-muted">
+            <ShieldCheck className="w-5 h-5 text-help" />
             <span className="text-[12px] font-semibold uppercase tracking-widest">Cifrado de extremo a extremo</span>
           </div>
           <div className="flex gap-4 w-full md:w-auto">
-            <button className="flex-1 md:flex-none h-12 px-8 text-[12px] font-semibold bg-white/5 border border-white/10 text-white hover:bg-white/10 transition-colors rounded-full flex items-center justify-center gap-2">
+            <button className="flex-1 md:flex-none h-12 px-8 text-[12px] font-semibold bg-white border border-border text-foreground hover:bg-surface-muted transition-colors rounded-full flex items-center justify-center gap-2">
               <XCircle className="w-4 h-4" />
               CANCELAR
             </button>
-            <button 
+            <button
               disabled={!file || isProcessing}
               onClick={handleContinue}
-              className="flex-1 md:flex-none h-12 px-8 text-[12px] font-bold bg-indigo-600 text-white hover:bg-indigo-500 disabled:opacity-30 disabled:cursor-not-allowed transition-all rounded-full flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(99,102,241,0.5)]"
+              className="flex-1 md:flex-none h-12 px-8 text-[12px] font-bold bg-primary text-primary-foreground hover:opacity-90 disabled:opacity-30 disabled:cursor-not-allowed transition-all rounded-full flex items-center justify-center gap-2"
             >
               {isProcessing ? (
                 <>
-                  <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <svg className="animate-spin h-5 w-5 text-primary-foreground" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>

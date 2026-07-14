@@ -34,8 +34,8 @@ const STATUS_LABEL: Record<DocumentStatus, string> = {
 };
 
 const STATUS_CLASSES: Record<DocumentStatus, string> = {
-  upload: 'bg-amber-500/15 text-amber-300 border-amber-500/30',
-  processing: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30',
+  upload: 'bg-alert text-on-alert border-alert',
+  processing: 'bg-help text-on-help border-help',
 };
 
 function iconForType(type: string) {
@@ -178,22 +178,20 @@ function MePageInner() {
   return (
     <>
       <Header variant="me" />
-      <main className="flex-grow bg-background px-4 sm:px-6 py-8 sm:py-12">
+      <main className="flex-grow bg-surface-muted px-4 sm:px-6 py-8 sm:py-12">
         <div className="max-w-5xl mx-auto space-y-8">
-          <section className="relative overflow-hidden rounded-[32px] border border-white/10 bg-[#141417] p-6 sm:p-10">
-            <div className="absolute top-0 right-0 w-72 h-72 bg-indigo-600/15 blur-[120px] pointer-events-none" />
-            <div className="absolute -bottom-20 -left-20 w-72 h-72 bg-indigo-500/10 blur-[120px] pointer-events-none" />
+          <section className="relative overflow-hidden rounded-2xl border border-border bg-white p-6 sm:p-10">
             <div className="relative z-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
               <div className="flex items-center gap-4">
-                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-indigo-400 font-semibold text-xl">
+                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-primary-container border border-border flex items-center justify-center text-primary font-semibold text-xl">
                   JP
                 </div>
                 <div>
-                  <span className="text-[10px] font-bold text-indigo-400 uppercase tracking-widest">Perfil</span>
-                  <h1 className="text-2xl sm:text-3xl font-light text-white mt-1">
+                  <span className="text-[10px] font-bold text-primary uppercase tracking-widest">Perfil</span>
+                  <h1 className="text-2xl sm:text-3xl font-light text-foreground mt-1">
                     Juan <span className="font-semibold">Pérez</span>
                   </h1>
-                  <p className="text-xs text-on-surface-variant mt-1 uppercase tracking-widest">
+                  <p className="text-xs text-foreground-muted mt-1 uppercase tracking-widest">
                     ID 12.345.678 · {roleLabel(role)}
                   </p>
                 </div>
@@ -201,14 +199,14 @@ function MePageInner() {
               <div className="flex items-center gap-3">
                 <Link
                   href="/"
-                  className="inline-flex items-center gap-2 h-10 px-4 rounded-full bg-white/5 border border-white/10 text-white/80 hover:bg-white/10 hover:text-white transition-colors text-[12px] font-semibold uppercase tracking-widest"
+                  className="inline-flex items-center gap-2 h-10 px-4 rounded-full bg-white border border-border text-foreground hover:bg-surface-muted transition-colors text-[12px] font-semibold uppercase tracking-widest"
                 >
                   <ArrowLeft className="w-4 h-4" />
                   Volver
                 </Link>
                 <Link
                   href="/upload"
-                  className="inline-flex items-center gap-2 h-10 px-4 rounded-full bg-indigo-600 hover:bg-indigo-500 text-white transition-colors text-[12px] font-bold uppercase tracking-widest shadow-[0_0_15px_rgba(99,102,241,0.4)]"
+                  className="inline-flex items-center gap-2 h-10 px-4 rounded-full bg-primary text-primary-foreground hover:opacity-90 transition-colors text-[12px] font-bold uppercase tracking-widest"
                 >
                   <UploadCloud className="w-4 h-4" />
                   Subir documento
@@ -219,22 +217,22 @@ function MePageInner() {
 
           <section className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <StatCard
-              icon={<FileText className="w-5 h-5 text-indigo-400" />}
+              icon={<FileText className="w-5 h-5 text-primary" />}
               label="Total"
               value={stats.total}
-              accent="indigo"
+              accent="primary"
             />
             <StatCard
-              icon={<CheckCircle2 className="w-5 h-5 text-emerald-400" />}
+              icon={<CheckCircle2 className="w-5 h-5 text-help" />}
               label="Procesados"
               value={stats.processing}
-              accent="emerald"
+              accent="help"
             />
             <StatCard
-              icon={<Wallet className="w-5 h-5 text-amber-400" />}
+              icon={<Wallet className="w-5 h-5 text-primary" />}
               label="Anticipos y Gastos"
               value={formatCurrencyARS(stats.gastos)}
-              accent="amber"
+              accent="primary"
             />
           </section>
 
@@ -243,19 +241,19 @@ function MePageInner() {
             style={{ '--me-actions-col': '18rem' } as React.CSSProperties}
           >
             {docs.length === 0 ? (
-              <div className="rounded-[32px] border border-white/10 bg-[#141417] p-10 text-center space-y-4">
-                <div className="w-14 h-14 mx-auto rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-indigo-400">
+              <div className="rounded-2xl border border-border bg-white p-10 text-center space-y-4">
+                <div className="w-14 h-14 mx-auto rounded-2xl bg-primary-container border border-border flex items-center justify-center text-primary">
                   <UploadCloud className="w-7 h-7" />
                 </div>
-                <h2 className="text-xl font-light text-white">
+                <h2 className="text-xl font-light text-foreground">
                   Aún no tenés <span className="font-semibold">documentos</span>
                 </h2>
-                <p className="text-sm text-on-surface-variant max-w-md mx-auto">
+                <p className="text-sm text-foreground-muted max-w-md mx-auto">
                   Subí tu primera factura o remito para empezar a gestionarlos desde acá.
                 </p>
                 <Link
                   href="/upload"
-                  className="inline-flex items-center gap-2 h-11 px-6 rounded-full bg-indigo-600 hover:bg-indigo-500 text-white text-[12px] font-bold uppercase tracking-widest"
+                  className="inline-flex items-center gap-2 h-11 px-6 rounded-full bg-primary text-primary-foreground hover:opacity-90 text-[12px] font-bold uppercase tracking-widest"
                 >
                   <UploadCloud className="w-4 h-4" />
                   Subir mi primer documento
@@ -268,16 +266,16 @@ function MePageInner() {
                 return (
                   <div key={group} className="space-y-3">
                     <div className="flex items-center gap-3">
-                      <h2 className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">
+                      <h2 className="text-[10px] font-bold text-foreground-muted uppercase tracking-widest">
                         {group}
                       </h2>
-                      <div className="h-px flex-1 bg-white/10" />
-                      <span className="text-[10px] font-semibold text-on-surface-variant">
+                      <div className="h-px flex-1 bg-border" />
+                      <span className="text-[10px] font-semibold text-foreground-muted">
                         {list.length}
                       </span>
                     </div>
 
-                    <div className="hidden sm:grid grid-cols-[2fr_1fr_1fr_1fr_var(--me-actions-col)] gap-4 px-5 pb-2 text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">
+                    <div className="hidden sm:grid grid-cols-[2fr_1fr_1fr_1fr_var(--me-actions-col)] gap-4 px-5 pb-2 text-[10px] font-bold text-foreground-muted uppercase tracking-widest">
                       <span>Documento</span>
                       <span>Fecha de subida</span>
                       <span>NIT</span>
@@ -297,38 +295,38 @@ function MePageInner() {
                           <li
                             key={doc.id}
                             ref={showRef}
-                            className={`rounded-2xl border bg-[#141417] transition-all ${
+                            className={`rounded-2xl border bg-white transition-all ${
                               isHighlighted
-                                ? 'border-indigo-500/60 ring-2 ring-indigo-500/40 shadow-[0_0_30px_rgba(99,102,241,0.25)]'
-                                : 'border-white/10 hover:border-white/20'
+                                ? 'border-primary ring-2 ring-primary/40 shadow-[0_0_30px_rgba(219,0,97,0.18)]'
+                                : 'border-border hover:border-primary/60'
                             }`}
                           >
                             <div className="p-4 sm:p-5 grid grid-cols-1 sm:grid-cols-[2fr_1fr_1fr_1fr_var(--me-actions-col)] gap-x-4 gap-y-3 sm:items-center">
                               <div className="flex items-center gap-3 min-w-0">
-                                <div className="w-11 h-11 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-indigo-400 flex-shrink-0">
+                                <div className="w-11 h-11 rounded-xl bg-primary-container border border-border flex items-center justify-center text-primary flex-shrink-0">
                                   <Icon className="w-5 h-5" />
                                 </div>
                                 <div className="min-w-0">
-                                  <p className="font-mono text-sm text-white truncate">{doc.fileName}</p>
-                                  <p className="text-[11px] text-on-surface-variant mt-1 sm:hidden">
+                                  <p className="font-mono text-sm text-foreground truncate">{doc.fileName}</p>
+                                  <p className="text-[11px] text-foreground-muted mt-1 sm:hidden">
                                     {formatDate(doc.uploadedAt)} · {formatTime(doc.uploadedAt)}
                                   </p>
                                 </div>
                               </div>
 
-                              <div className="hidden sm:block text-[11px] text-on-surface-variant">
+                              <div className="hidden sm:block text-[11px] text-foreground-muted">
                                 <p>{formatDate(doc.uploadedAt)}</p>
-                                <p className="text-white/40 mt-0.5">{formatTime(doc.uploadedAt)}</p>
+                                <p className="text-foreground-muted/70 mt-0.5">{formatTime(doc.uploadedAt)}</p>
                               </div>
 
                               <div className="text-xs">
-                                <span className="sm:hidden text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mr-2">NIT</span>
-                                <span className="font-mono text-white/90">{nit}</span>
+                                <span className="sm:hidden text-[10px] font-bold uppercase tracking-widest text-foreground-muted mr-2">NIT</span>
+                                <span className="font-mono text-foreground">{nit}</span>
                               </div>
 
                               <div className="text-xs">
-                                <span className="sm:hidden text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mr-2">Valor</span>
-                                <span className="font-mono text-white/90">{valor}</span>
+                                <span className="sm:hidden text-[10px] font-bold uppercase tracking-widest text-foreground-muted mr-2">Valor</span>
+                                <span className="font-mono text-foreground">{valor}</span>
                               </div>
 
                               <div className="flex items-center gap-2 sm:justify-end flex-wrap sm:flex-nowrap">
@@ -339,28 +337,28 @@ function MePageInner() {
                                 </span>
                                 <Link
                                   href={`/review?doc=${encodeURIComponent(doc.id)}`}
-                                  className="h-9 px-4 rounded-full bg-white/5 border border-white/10 text-white hover:bg-white/10 text-[11px] font-semibold uppercase tracking-widest flex items-center gap-1"
+                                  className="h-9 px-4 rounded-full bg-white border border-border text-foreground hover:bg-surface-muted text-[11px] font-semibold uppercase tracking-widest flex items-center gap-1"
                                 >
                                   Revisar
                                 </Link>
                                 <button
                                   onClick={() => toggleExpanded(doc.id)}
                                   aria-label={isExpanded ? 'Ocultar detalle' : 'Ver detalle'}
-                                  className="h-9 w-9 rounded-full bg-white/5 border border-white/10 text-on-surface-variant hover:bg-white/10 hover:text-white flex items-center justify-center"
+                                  className="h-9 w-9 rounded-full bg-white border border-border text-foreground-muted hover:bg-surface-muted hover:text-foreground flex items-center justify-center"
                                 >
                                   {isExpanded ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
                                 </button>
                                 <button
                                   onClick={() => handleDelete(doc)}
                                   aria-label="Eliminar documento"
-                                  className="h-9 w-9 rounded-full bg-error/10 border border-error/30 text-error hover:bg-error/20 flex items-center justify-center"
+                                  className="h-9 w-9 rounded-full bg-primary-container border border-primary/30 text-primary hover:bg-primary hover:text-primary-foreground flex items-center justify-center"
                                 >
                                   <Trash2 className="w-4 h-4" />
                                 </button>
                               </div>
                             </div>
                             {isExpanded && (
-                              <div className="px-4 sm:px-5 pb-4 sm:pb-5 border-t border-white/5">
+                              <div className="px-4 sm:px-5 pb-4 sm:pb-5 border-t border-border">
                                 <Preview doc={doc} />
                               </div>
                             )}
@@ -388,24 +386,23 @@ function StatCard({
   icon: React.ReactNode;
   label: string;
   value: number | string;
-  accent: 'indigo' | 'emerald' | 'amber';
+  accent: 'primary' | 'help';
 }) {
   const accentRing: Record<typeof accent, string> = {
-    indigo: 'from-indigo-500/20',
-    emerald: 'from-emerald-500/20',
-    amber: 'from-amber-500/20',
+    primary: 'from-primary/15',
+    help: 'from-help/15',
   };
   const isAmount = typeof value === 'string';
   return (
-    <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-[#141417] p-5">
+    <div className="relative overflow-hidden rounded-2xl border border-border bg-white p-5">
       <div className={`absolute -top-10 -right-10 w-32 h-32 bg-gradient-to-br ${accentRing[accent]} to-transparent blur-2xl pointer-events-none`} />
       <div className="relative z-10 flex items-center gap-4">
-        <div className="w-11 h-11 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center">
+        <div className="w-11 h-11 rounded-xl bg-primary-container border border-border flex items-center justify-center">
           {icon}
         </div>
         <div className="min-w-0">
-          <p className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">{label}</p>
-          <p className={`mt-1 font-semibold text-white ${isAmount ? 'text-xl truncate' : 'text-2xl'}`}>{value}</p>
+          <p className="text-[10px] font-bold text-foreground-muted uppercase tracking-widest">{label}</p>
+          <p className={`mt-1 font-semibold text-foreground ${isAmount ? 'text-xl truncate' : 'text-2xl'}`}>{value}</p>
         </div>
       </div>
     </div>
@@ -415,7 +412,7 @@ function StatCard({
 function Preview({ doc }: { doc: DocumentRecord }) {
   if (!doc.extracted) {
     return (
-      <div className="pt-4 flex items-start gap-3 text-xs text-on-surface-variant">
+      <div className="pt-4 flex items-start gap-3 text-xs text-foreground-muted">
         <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
         <p>Este documento aún no tiene datos extraídos. Abrilo en revisión para procesarlo.</p>
       </div>
@@ -450,8 +447,8 @@ function Preview({ doc }: { doc: DocumentRecord }) {
 function PreviewRow({ label, value, mono = false }: { label: string; value: string; mono?: boolean }) {
   return (
     <div className="flex flex-col">
-      <dt className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">{label}</dt>
-      <dd className={`mt-1 text-white ${mono ? 'font-mono' : ''}`}>{value}</dd>
+      <dt className="text-[10px] font-bold text-foreground-muted uppercase tracking-widest">{label}</dt>
+      <dd className={`mt-1 text-foreground ${mono ? 'font-mono' : ''}`}>{value}</dd>
     </div>
   );
 }
@@ -468,8 +465,8 @@ function MeFallback() {
   return (
     <>
       <Header variant="me" />
-      <main className="flex-grow bg-background px-6 py-12">
-        <div className="max-w-5xl mx-auto text-center text-on-surface-variant text-sm">
+      <main className="flex-grow bg-surface-muted px-6 py-12">
+        <div className="max-w-5xl mx-auto text-center text-foreground-muted text-sm">
           Cargando perfil…
         </div>
       </main>

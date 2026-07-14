@@ -1,23 +1,28 @@
 <div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
+<img width="143" height="24" alt="Comfama" src="public/comfama-logo.svg" />
 </div>
 
-# Run and deploy your AI Studio app
+# Comfama — Portal de Gestión Documental
 
-This contains everything you need to run your app locally.
+App de ejemplo para la hackatón: carga de manifiestos, facturas y documentos de carga con extracción asistida y panel personal.
 
 View your app in AI Studio: https://ai.studio/apps/27386280-838d-48e0-9e70-c197640b7f9c
 
+## Identidad visual
+
+La paleta, tipografía y componentes viven en [`DESIGN.md`](DESIGN.md) — fuente única de verdad para todo cambio visual. Reglas operativas para agentes en [`AGENTS.md`](AGENTS.md) y skill en `.opencode/skills/comfama-design/SKILL.md`.
+
+- **Paleta**: `primary #DB0061`, `foreground #303030`, `neutral #CFCFCF`, `error #EB003F`, `help #0071EB`, `alert #FFC218`.
+- **Tipografía**: Roboto (400/500/700) — única familia permitida.
+- **Implementación**: tokens expuestos vía Tailwind CSS v4 `@theme` en `app/globals.css`.
+
 ## Run Locally
 
-**Prerequisites:**  Node.js
+**Prerequisites:** Node.js
 
-
-1. Install dependencies:
-   `npm install`
+1. Install dependencies: `npm install`
 2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+3. Run the app: `npm run dev`
 
 ## Patrón de Estados de Documentos
 

@@ -1,18 +1,21 @@
 import type {Metadata} from 'next';
-import { Inter, JetBrains_Mono } from 'next/font/google';
-import './globals.css'; // Global styles
+import { Roboto } from 'next/font/google';
+import './globals.css';
 
-const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
-const jetbrainsMono = JetBrains_Mono({ subsets: ['latin'], variable: '--font-mono' });
+const roboto = Roboto({
+  subsets: ['latin'],
+  weight: ['400', '500', '700'],
+  variable: '--font-roboto',
+});
 
 export const metadata: Metadata = {
-  title: 'LogiFlow Docs',
-  description: 'Logistics Document Management',
+  title: 'Comfama | Documentos',
+  description: 'Gestión documental Comfama',
 };
 
 export default function RootLayout({children}: {children: React.ReactNode}) {
   return (
-    <html lang="es" className={`${inter.variable} ${jetbrainsMono.variable}`}>
+    <html lang="es" className={roboto.variable}>
       <body suppressHydrationWarning className="font-sans antialiased min-h-screen flex flex-col">{children}</body>
     </html>
   );
