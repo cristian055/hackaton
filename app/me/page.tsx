@@ -238,7 +238,10 @@ function MePageInner() {
             />
           </section>
 
-          <section className="space-y-8">
+          <section
+            className="space-y-8"
+            style={{ '--me-actions-col': '18rem' } as React.CSSProperties}
+          >
             {docs.length === 0 ? (
               <div className="rounded-[32px] border border-white/10 bg-[#141417] p-10 text-center space-y-4">
                 <div className="w-14 h-14 mx-auto rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-indigo-400">
@@ -274,12 +277,12 @@ function MePageInner() {
                       </span>
                     </div>
 
-                    <div className="hidden sm:grid grid-cols-[2fr_1fr_1fr_1fr_auto] gap-4 px-5 pb-2 text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">
+                    <div className="hidden sm:grid grid-cols-[2fr_1fr_1fr_1fr_var(--me-actions-col)] gap-4 px-5 pb-2 text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">
                       <span>Documento</span>
                       <span>Fecha de subida</span>
                       <span>NIT</span>
                       <span>Valor</span>
-                      <span></span>
+                      <span aria-hidden="true"></span>
                     </div>
 
                     <ul className="space-y-3">
@@ -300,7 +303,7 @@ function MePageInner() {
                                 : 'border-white/10 hover:border-white/20'
                             }`}
                           >
-                            <div className="p-4 sm:p-5 grid grid-cols-1 sm:grid-cols-[2fr_1fr_1fr_1fr_auto] gap-x-4 gap-y-3 sm:items-center">
+                            <div className="p-4 sm:p-5 grid grid-cols-1 sm:grid-cols-[2fr_1fr_1fr_1fr_var(--me-actions-col)] gap-x-4 gap-y-3 sm:items-center">
                               <div className="flex items-center gap-3 min-w-0">
                                 <div className="w-11 h-11 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-indigo-400 flex-shrink-0">
                                   <Icon className="w-5 h-5" />
