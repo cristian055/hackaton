@@ -138,7 +138,6 @@ export default function ReviewPage() {
               </div>
             </div>
 
-            {/* Group: Proveedor */}
             <div className="space-y-4 pt-6 border-t border-white/10 relative z-10">
               <h3 className="text-[10px] font-bold text-indigo-400 uppercase tracking-widest">Detalles del Emisor</h3>
               <div className="flex flex-col gap-2 group">
@@ -149,32 +148,97 @@ export default function ReviewPage() {
                 </div>
                 <p className="text-[11px] text-green-400/80 mt-1 flex items-center gap-1"><CheckCircle className="w-3 h-3"/> CUIT: 30-71452896-1 • Proveedor Verificado</p>
               </div>
+              <div className="flex flex-col gap-2 group">
+                <label className="text-[12px] font-semibold text-white/60" htmlFor="nit">NIT</label>
+                <input className="bg-white/5 border border-white/10 p-3 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 font-mono text-sm w-full transition-all group-focus-within:bg-white/10 outline-none text-white" id="nit" type="text" defaultValue="900.123.456-7" />
+              </div>
             </div>
 
-            {/* Group: Operativo */}
             <div className="space-y-4 pt-6 border-t border-white/10 relative z-10">
-              <h3 className="text-[10px] font-bold text-indigo-400 uppercase tracking-widest">Datos Operativos</h3>
+              <h3 className="text-[10px] font-bold text-indigo-400 uppercase tracking-widest">Ubicación y Contacto</h3>
+              <div className="flex flex-col gap-2 group">
+                <label className="text-[12px] font-semibold text-white/60" htmlFor="direccion">Dirección</label>
+                <input className="bg-white/5 border border-white/10 p-3 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm w-full transition-all group-focus-within:bg-white/10 outline-none text-white" id="direccion" type="text" defaultValue="Calle 100 #15-20, Edificio Norte" />
+              </div>
+              <div className="flex flex-col gap-2 group">
+                <label className="text-[12px] font-semibold text-white/60" htmlFor="telefono">Teléfono</label>
+                <input className="bg-white/5 border border-white/10 p-3 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 font-mono text-sm w-full transition-all group-focus-within:bg-white/10 outline-none text-white" id="telefono" type="text" defaultValue="+57 (601) 742 8593" />
+              </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="flex flex-col gap-2 group">
-                  <label className="text-[12px] font-semibold text-white/60" htmlFor="monto">Monto Total ($)</label>
-                  <input className="bg-white/5 border border-white/10 p-3 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 font-mono text-sm w-full transition-all group-focus-within:bg-white/10 outline-none text-white" id="monto" type="text" defaultValue="559.625,00" />
+                  <label className="text-[12px] font-semibold text-white/60" htmlFor="departamento">Departamento</label>
+                  <input className="bg-white/5 border border-white/10 p-3 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm w-full transition-all group-focus-within:bg-white/10 outline-none text-white" id="departamento" type="text" defaultValue="Cundinamarca" />
                 </div>
                 <div className="flex flex-col gap-2 group">
-                  <label className="text-[12px] font-semibold text-white/60" htmlFor="kilometraje">Kilometraje</label>
-                  <div className="relative transition-all group-focus-within:bg-white/10 rounded-xl">
-                    <input className="bg-white/5 border border-white/10 p-3 pr-10 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 font-mono text-sm w-full outline-none text-white" id="kilometraje" type="number" defaultValue={124500} />
-                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[12px] font-bold text-white/40">KM</span>
-                  </div>
+                  <label className="text-[12px] font-semibold text-white/60" htmlFor="municipio">Municipio</label>
+                  <input className="bg-white/5 border border-white/10 p-3 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm w-full transition-all group-focus-within:bg-white/10 outline-none text-white" id="municipio" type="text" defaultValue="Bogotá D.C." />
                 </div>
               </div>
             </div>
 
-            {/* Warnings/Alerts */}
+            <div className="space-y-4 pt-6 border-t border-white/10 relative z-10">
+              <h3 className="text-[10px] font-bold text-indigo-400 uppercase tracking-widest">Valores e Impuestos</h3>
+              <div className="bg-white/5 border border-white/10 rounded-2xl divide-y divide-white/5">
+                <div className="p-4 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[12px] font-bold text-white">Tarifa General (19%)</span>
+                    <span className="text-[10px] font-semibold text-indigo-400 uppercase tracking-widest">Bienes</span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="flex flex-col gap-1">
+                      <label className="text-[10px] font-semibold text-white/40 uppercase tracking-widest" htmlFor="iva19_base">Base Gravada</label>
+                      <input className="bg-white/5 border border-white/10 p-2 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 font-mono text-xs w-full outline-none text-white" id="iva19_base" type="text" defaultValue="420.000,00" />
+                    </div>
+                    <div className="flex flex-col gap-1">
+                      <label className="text-[10px] font-semibold text-white/40 uppercase tracking-widest" htmlFor="iva19_valor">IVA</label>
+                      <input className="bg-white/5 border border-white/10 p-2 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 font-mono text-xs w-full outline-none text-white" id="iva19_valor" type="text" defaultValue="79.800,00" />
+                    </div>
+                  </div>
+                </div>
+                <div className="p-4 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[12px] font-bold text-white">Tarifa Diferencial (5%)</span>
+                    <span className="text-[10px] font-semibold text-indigo-400 uppercase tracking-widest">Agro / Salud</span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="flex flex-col gap-1">
+                      <label className="text-[10px] font-semibold text-white/40 uppercase tracking-widest" htmlFor="iva5_base">Base Gravada</label>
+                      <input className="bg-white/5 border border-white/10 p-2 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 font-mono text-xs w-full outline-none text-white" id="iva5_base" type="text" defaultValue="50.000,00" />
+                    </div>
+                    <div className="flex flex-col gap-1">
+                      <label className="text-[10px] font-semibold text-white/40 uppercase tracking-widest" htmlFor="iva5_valor">IVA</label>
+                      <input className="bg-white/5 border border-white/10 p-2 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 font-mono text-xs w-full outline-none text-white" id="iva5_valor" type="text" defaultValue="2.500,00" />
+                    </div>
+                  </div>
+                </div>
+                <div className="p-4 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[12px] font-bold text-white">Tarifa Exentos (0%)</span>
+                    <span className="text-[10px] font-semibold text-indigo-400 uppercase tracking-widest">Canasta</span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="flex flex-col gap-1">
+                      <label className="text-[10px] font-semibold text-white/40 uppercase tracking-widest" htmlFor="iva0_base">Base Gravada</label>
+                      <input className="bg-white/5 border border-white/10 p-2 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 font-mono text-xs w-full outline-none text-white" id="iva0_base" type="text" defaultValue="0,00" />
+                    </div>
+                    <div className="flex flex-col gap-1">
+                      <label className="text-[10px] font-semibold text-white/40 uppercase tracking-widest" htmlFor="iva0_valor">IVA</label>
+                      <input className="bg-white/5 border border-white/10 p-2 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 font-mono text-xs w-full outline-none text-white" id="iva0_valor" type="text" defaultValue="0,00" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="flex flex-col gap-2 group">
+                <label className="text-[12px] font-semibold text-white/60" htmlFor="total_factura">Total Factura</label>
+                <input className="bg-white/5 border border-indigo-500/30 p-3 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 font-mono text-sm w-full transition-all group-focus-within:bg-white/10 outline-none text-white" id="total_factura" type="text" defaultValue="559.625,00" />
+              </div>
+            </div>
+
             <div className="bg-indigo-500/10 border border-indigo-500/20 p-4 rounded-2xl flex gap-4 items-start relative z-10">
               <Info className="w-5 h-5 text-indigo-400 flex-shrink-0 mt-0.5" />
               <div>
                 <p className="text-[12px] text-white font-bold">Validación de Datos</p>
-                <p className="text-xs text-white/60 mt-1">El monto total coincide con el cálculo de IVA. El kilometraje es consistente con el reporte de flota anterior (+450km).</p>
+                <p className="text-xs text-white/60 mt-1">3 tarifas de IVA detectadas. NIT validado contra registro mercantil. Total y bases gravadas reconcilian con el documento.</p>
               </div>
             </div>
           </form>
