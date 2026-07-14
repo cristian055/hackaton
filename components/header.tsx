@@ -1,9 +1,9 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { Bell, HelpCircle, Edit } from 'lucide-react';
+import { Bell, HelpCircle, Edit, ArrowLeft } from 'lucide-react';
 
 interface HeaderProps {
-  variant?: 'role-selection' | 'upload' | 'review';
+  variant?: 'role-selection' | 'upload' | 'review' | 'me';
 }
 
 export function Header({ variant = 'role-selection' }: HeaderProps) {
@@ -13,7 +13,17 @@ export function Header({ variant = 'role-selection' }: HeaderProps) {
         <Link href="/" className="font-bold text-xl text-white flex items-center">
           LogiFlow Docs
         </Link>
-        
+
+        {variant === 'me' && (
+          <Link
+            href="/"
+            className="hidden md:inline-flex items-center gap-2 text-on-surface-variant hover:text-white transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            <span className="text-[12px] font-semibold uppercase tracking-widest">Volver</span>
+          </Link>
+        )}
+
         {variant === 'role-selection' && (
           <>
             <div className="hidden md:flex h-8 w-px bg-outline-variant mx-2"></div>
@@ -34,10 +44,11 @@ export function Header({ variant = 'role-selection' }: HeaderProps) {
           <div className="hidden md:flex items-center h-8 px-4 bg-white/5 border border-white/10 rounded-full ml-6">
             <Edit className="w-4 h-4 text-outline mr-2" />
             <span className="text-[12px] font-semibold text-on-surface-variant mr-1">CECO:</span>
-            <input 
-              className="bg-transparent border-none focus:ring-0 font-mono text-sm text-primary p-0 w-32 outline-none" 
-              spellCheck="false" 
-              type="text" 
+            <input
+              id="logiflow-upload-ceco"
+              className="bg-transparent border-none focus:ring-0 font-mono text-sm text-primary p-0 w-32 outline-none"
+              spellCheck="false"
+              type="text"
               defaultValue="7040-LOG-OPS"
             />
           </div>
@@ -74,6 +85,13 @@ export function Header({ variant = 'role-selection' }: HeaderProps) {
           </div>
         )}
 
+        {variant === 'me' && (
+          <div className="flex flex-col items-end mr-4 hidden md:flex">
+            <span className="text-[12px] font-bold text-on-surface">Juan Pérez</span>
+            <span className="text-[10px] font-semibold text-on-surface-variant uppercase tracking-wider">ID: 12.345.678</span>
+          </div>
+        )}
+
         {variant === 'review' && (
           <div className="flex flex-col items-end hidden md:flex">
             <label className="text-[12px] font-semibold text-on-surface-variant" htmlFor="ceco-edit">CECO</label>
@@ -97,16 +115,16 @@ export function Header({ variant = 'role-selection' }: HeaderProps) {
           <button className="p-2 rounded-full hover:bg-surface-container-low transition-colors text-on-surface-variant">
             <HelpCircle className="w-5 h-5" />
           </button>
-          <div className="w-9 h-9 rounded-full border border-outline-variant overflow-hidden ml-2 bg-primary-container flex items-center justify-center">
-             <Image 
-               src="https://picsum.photos/seed/user/100/100" 
-               alt="User profile" 
-               width={36} 
-               height={36} 
-               className="w-full h-full object-cover" 
+          <Link href="/me" className="w-9 h-9 rounded-full border border-outline-variant overflow-hidden ml-2 bg-primary-container flex items-center justify-center">
+             <Image
+               src="https://picsum.photos/seed/user/100/100"
+               alt="User profile"
+               width={36}
+               height={36}
+               className="w-full h-full object-cover"
                referrerPolicy="no-referrer"
              />
-          </div>
+          </Link>
         </div>
       </div>
     </header>

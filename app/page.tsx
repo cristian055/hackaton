@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { Truck, ShieldAlert, ArrowRight } from 'lucide-react';
 import { Header } from '@/components/header';
+import { setRole } from '@/lib/store';
 import { useState, useEffect } from 'react';
 
 export default function RoleSelectionPage() {
@@ -26,7 +27,7 @@ export default function RoleSelectionPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 h-[400px]">
-            <Link href="/upload" className="group relative bg-[#141417] border border-white/10 rounded-[32px] overflow-hidden flex flex-col items-center justify-center p-8 hover:border-primary focus:ring-2 focus:ring-primary outline-none transition-all duration-300">
+            <Link href="/upload" onClick={() => setRole('conductor')} className="group relative bg-[#141417] border border-white/10 rounded-[32px] overflow-hidden flex flex-col items-center justify-center p-8 hover:border-primary focus:ring-2 focus:ring-primary outline-none transition-all duration-300">
               <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-600/10 blur-[100px] pointer-events-none"></div>
               <div className="mb-6 w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center text-indigo-500 transition-transform duration-500 group-hover:scale-110">
                 <Truck className="w-8 h-8" />
@@ -39,7 +40,7 @@ export default function RoleSelectionPage() {
               </div>
             </Link>
 
-            <Link href="/upload" className="group relative bg-[#141417] border border-white/10 rounded-[32px] overflow-hidden flex flex-col items-center justify-center p-8 hover:border-primary focus:ring-2 focus:ring-primary outline-none transition-all duration-300">
+            <Link href="/upload" onClick={() => setRole('personal')} className="group relative bg-[#141417] border border-white/10 rounded-[32px] overflow-hidden flex flex-col items-center justify-center p-8 hover:border-primary focus:ring-2 focus:ring-primary outline-none transition-all duration-300">
               <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-600/10 blur-[100px] pointer-events-none"></div>
               <div className="mb-6 w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center text-indigo-500 transition-transform duration-500 group-hover:scale-110">
                 <ShieldAlert className="w-8 h-8" />
