@@ -217,6 +217,16 @@ function ReviewPageInner() {
                     onChange={(e) => updateField('nroFactura', e.target.value)}
                   />
                 </div>
+                              <div className="flex flex-col gap-2 group">
+                <label className="text-[12px] font-semibold text-white/60" htmlFor="cliente">Cliente</label>
+                <input
+                  className="bg-white/5 border border-white/10 p-3 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 font-mono text-sm w-full transition-all group-focus-within:bg-white/10 outline-none text-white"
+                  id="cliente"
+                  type="text"
+                  value={fields.cliente}
+                  onChange={(e) => updateField('cliente', e.target.value)}
+                />
+              </div>
               </div>
             </div>
 
@@ -234,18 +244,8 @@ function ReviewPageInner() {
                   />
                   <Search className="w-5 h-5 absolute right-3 top-1/2 -translate-y-1/2 text-indigo-400" />
                 </div>
-                <p className="text-[11px] text-green-400/80 mt-1 flex items-center gap-1"><CheckCircle className="w-3 h-3"/> CUIT: {fields.cuit || DEMO_FIELDS.cuit} • Proveedor Verificado</p>
               </div>
-              <div className="flex flex-col gap-2 group">
-                <label className="text-[12px] font-semibold text-white/60" htmlFor="cuit">CUIT</label>
-                <input
-                  className="bg-white/5 border border-white/10 p-3 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 font-mono text-sm w-full transition-all group-focus-within:bg-white/10 outline-none text-white"
-                  id="cuit"
-                  type="text"
-                  value={fields.cuit}
-                  onChange={(e) => updateField('cuit', e.target.value)}
-                />
-              </div>
+
               <div className="flex flex-col gap-2 group">
                 <label className="text-[12px] font-semibold text-white/60" htmlFor="nit">NIT</label>
                 <input
@@ -259,7 +259,6 @@ function ReviewPageInner() {
             </div>
 
             <div className="space-y-4 pt-6 border-t border-white/10 relative z-10">
-              <h3 className="text-[10px] font-bold text-indigo-400 uppercase tracking-widest">Ubicación y Contacto</h3>
               <div className="flex flex-col gap-2 group">
                 <label className="text-[12px] font-semibold text-white/60" htmlFor="direccion">Dirección</label>
                 <input
@@ -282,29 +281,6 @@ function ReviewPageInner() {
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="flex flex-col gap-2 group">
-                  <label className="text-[12px] font-semibold text-white/60" htmlFor="monto">Monto Total ($)</label>
-                  <input
-                    className="bg-white/5 border border-white/10 p-3 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 font-mono text-sm w-full transition-all group-focus-within:bg-white/10 outline-none text-white"
-                    id="monto"
-                    type="text"
-                    value={fields.monto}
-                    onChange={(e) => updateField('monto', e.target.value)}
-                  />
-                </div>
-                <div className="flex flex-col gap-2 group">
-                  <label className="text-[12px] font-semibold text-white/60" htmlFor="kilometraje">Kilometraje</label>
-                  <div className="relative transition-all group-focus-within:bg-white/10 rounded-xl">
-                    <input
-                      className="bg-white/5 border border-white/10 p-3 pr-10 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 font-mono text-sm w-full outline-none text-white"
-                      id="kilometraje"
-                      type="number"
-                      value={fields.kilometraje}
-                      onChange={(e) => updateField('kilometraje', e.target.value)}
-                    />
-                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[12px] font-bold text-white/40">KM</span>
-                  </div>
-                </div>
-                <div className="flex flex-col gap-2 group">
                   <label className="text-[12px] font-semibold text-white/60" htmlFor="departamento">Departamento</label>
                   <input
                     className="bg-white/5 border border-white/10 p-3 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm w-full transition-all group-focus-within:bg-white/10 outline-none text-white"
@@ -325,17 +301,6 @@ function ReviewPageInner() {
                   />
                 </div>
               </div>
-              <div className="flex flex-col gap-2 group">
-                <label className="text-[12px] font-semibold text-white/60" htmlFor="ceco-form">CECO</label>
-                <input
-                  id="ceco-form"
-                  className="bg-white/5 border border-white/10 p-3 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 font-mono text-sm w-full transition-all group-focus-within:bg-white/10 outline-none text-white"
-                  type="text"
-                  value={ceco}
-                  onChange={(e) => setCeco(e.target.value)}
-                  placeholder="Ej: 7040-LOG-OPS"
-                />
-              </div>
             </div>
 
 <div className="space-y-4 pt-6 border-t border-white/10 relative z-10">
@@ -343,8 +308,7 @@ function ReviewPageInner() {
               <div className="bg-white/5 border border-white/10 rounded-2xl divide-y divide-white/5">
                 <div className="p-4 space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-[12px] font-bold text-white">Tarifa General (19%)</span>
-                    <span className="text-[10px] font-semibold text-indigo-400 uppercase tracking-widest">Bienes</span>
+                    <span className="text-[12px] font-bold text-white">IVA</span>
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     <div className="flex flex-col gap-1">
@@ -371,8 +335,7 @@ function ReviewPageInner() {
                 </div>
                 <div className="p-4 space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-[12px] font-bold text-white">Tarifa Diferencial (5%)</span>
-                    <span className="text-[10px] font-semibold text-indigo-400 uppercase tracking-widest">Agro / Salud</span>
+                    <span className="text-[12px] font-bold text-white">IPO consumo (8%)</span>
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     <div className="flex flex-col gap-1">
@@ -400,7 +363,6 @@ function ReviewPageInner() {
                 <div className="p-4 space-y-2">
                   <div className="flex items-center justify-between">
                     <span className="text-[12px] font-bold text-white">Tarifa Exentos (0%)</span>
-                    <span className="text-[10px] font-semibold text-indigo-400 uppercase tracking-widest">Canasta</span>
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     <div className="flex flex-col gap-1">
@@ -425,6 +387,16 @@ function ReviewPageInner() {
                     </div>
                   </div>
                 </div>
+              </div>
+                            <div className="flex flex-col gap-2 group">
+                <label className="text-[12px] font-semibold text-white/60" htmlFor="total_factura">Propina</label>
+                <input
+                  className="bg-white/5 border border-indigo-500/30 p-3 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 font-mono text-sm w-full transition-all group-focus-within:bg-white/10 outline-none text-white"
+                  id="total_factura"
+                  type="text"
+                  value={fields.totalFactura}
+                  onChange={(e) => updateField('totalFactura', e.target.value)}
+                />
               </div>
               <div className="flex flex-col gap-2 group">
                 <label className="text-[12px] font-semibold text-white/60" htmlFor="total_factura">Total Factura</label>

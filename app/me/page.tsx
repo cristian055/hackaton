@@ -15,6 +15,7 @@ import {
   UploadCloud,
   CheckCircle2,
   AlertCircle,
+  Wallet,
 } from 'lucide-react';
 import { Header } from '@/components/header';
 import {
@@ -90,6 +91,21 @@ function roleLabel(role: Role): string {
   return role === 'conductor' ? 'Conductor' : 'Personal';
 }
 
+function parseAmount(raw: string | undefined): number {
+  if (!raw) return 0;
+  const cleaned = raw.replace(/[^\d.,-]/g, '').replace(/\./g, '').replace(',', '.');
+  const n = parseFloat(cleaned);
+  return Number.isFinite(n) ? n : 0;
+}
+
+function formatCurrencyARS(n: number): string {
+  return new Intl.NumberFormat('es-AR', {
+    style: 'currency',
+    currency: 'ARS',
+    maximumFractionDigits: 2,
+  }).format(n);
+}
+
 function MePageInner() {
   const searchParams = useSearchParams();
   const highlightId = searchParams?.get('highlight') ?? null;
@@ -120,10 +136,14 @@ function MePageInner() {
   const stats = useMemo(() => {
     const total = docs.length;
     let processing = 0;
+    let gastos = 0;
     for (const d of docs) {
-      if (d.status === 'processing') processing += 1;
+      if (d.status === 'processing') {
+        processing += 1;
+        gastos += parseAmount(d.extracted?.totalFactura);
+      }
     }
-    return { total, processing };
+    return { total, processing, gastos };
   }, [docs]);
 
   const grouped = useMemo(() => {
@@ -197,7 +217,7 @@ function MePageInner() {
             </div>
           </section>
 
-          <section className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <section className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <StatCard
               icon={<FileText className="w-5 h-5 text-indigo-400" />}
               label="Total"
@@ -209,6 +229,12 @@ function MePageInner() {
               label="Procesados"
               value={stats.processing}
               accent="emerald"
+            />
+            <StatCard
+              icon={<Wallet className="w-5 h-5 text-amber-400" />}
+              label="Anticipos y Gastos"
+              value={formatCurrencyARS(stats.gastos)}
+              accent="amber"
             />
           </section>
 
@@ -247,12 +273,23 @@ function MePageInner() {
                         {list.length}
                       </span>
                     </div>
+
+                    <div className="hidden sm:grid grid-cols-[2fr_1fr_1fr_1fr_auto] gap-4 px-5 pb-2 text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">
+                      <span>Documento</span>
+                      <span>Fecha de subida</span>
+                      <span>NIT</span>
+                      <span>Valor</span>
+                      <span></span>
+                    </div>
+
                     <ul className="space-y-3">
                       {list.map((doc) => {
                         const Icon = iconForType(doc.fileType);
                         const isExpanded = !!expanded[doc.id];
                         const isHighlighted = highlightId === doc.id;
                         const showRef = isHighlighted ? highlightRef : null;
+                        const nit = doc.extracted?.nit ?? '—';
+                        const valor = doc.extracted?.totalFactura ?? '—';
                         return (
                           <li
                             key={doc.id}
@@ -263,17 +300,35 @@ function MePageInner() {
                                 : 'border-white/10 hover:border-white/20'
                             }`}
                           >
-                            <div className="p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center gap-4">
-                              <div className="w-11 h-11 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-indigo-400 flex-shrink-0">
-                                <Icon className="w-5 h-5" />
+                            <div className="p-4 sm:p-5 grid grid-cols-1 sm:grid-cols-[2fr_1fr_1fr_1fr_auto] gap-x-4 gap-y-3 sm:items-center">
+                              <div className="flex items-center gap-3 min-w-0">
+                                <div className="w-11 h-11 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-indigo-400 flex-shrink-0">
+                                  <Icon className="w-5 h-5" />
+                                </div>
+                                <div className="min-w-0">
+                                  <p className="font-mono text-sm text-white truncate">{doc.fileName}</p>
+                                  <p className="text-[11px] text-on-surface-variant mt-1 sm:hidden">
+                                    {formatDate(doc.uploadedAt)} · {formatTime(doc.uploadedAt)}
+                                  </p>
+                                </div>
                               </div>
-                              <div className="flex-1 min-w-0">
-                                <p className="font-mono text-sm text-white truncate">{doc.fileName}</p>
-                                <p className="text-[11px] text-on-surface-variant mt-1">
-                                  {formatDate(doc.uploadedAt)} · {formatTime(doc.uploadedAt)}
-                                </p>
+
+                              <div className="hidden sm:block text-[11px] text-on-surface-variant">
+                                <p>{formatDate(doc.uploadedAt)}</p>
+                                <p className="text-white/40 mt-0.5">{formatTime(doc.uploadedAt)}</p>
                               </div>
-                              <div className="flex items-center gap-3 flex-wrap sm:flex-nowrap">
+
+                              <div className="text-xs">
+                                <span className="sm:hidden text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mr-2">NIT</span>
+                                <span className="font-mono text-white/90">{nit}</span>
+                              </div>
+
+                              <div className="text-xs">
+                                <span className="sm:hidden text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mr-2">Valor</span>
+                                <span className="font-mono text-white/90">{valor}</span>
+                              </div>
+
+                              <div className="flex items-center gap-2 sm:justify-end flex-wrap sm:flex-nowrap">
                                 <span
                                   className={`text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full border ${STATUS_CLASSES[doc.status]}`}
                                 >
@@ -329,7 +384,7 @@ function StatCard({
 }: {
   icon: React.ReactNode;
   label: string;
-  value: number;
+  value: number | string;
   accent: 'indigo' | 'emerald' | 'amber';
 }) {
   const accentRing: Record<typeof accent, string> = {
@@ -337,6 +392,7 @@ function StatCard({
     emerald: 'from-emerald-500/20',
     amber: 'from-amber-500/20',
   };
+  const isAmount = typeof value === 'string';
   return (
     <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-[#141417] p-5">
       <div className={`absolute -top-10 -right-10 w-32 h-32 bg-gradient-to-br ${accentRing[accent]} to-transparent blur-2xl pointer-events-none`} />
@@ -344,9 +400,9 @@ function StatCard({
         <div className="w-11 h-11 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center">
           {icon}
         </div>
-        <div>
+        <div className="min-w-0">
           <p className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">{label}</p>
-          <p className="text-2xl font-semibold text-white mt-1">{value}</p>
+          <p className={`mt-1 font-semibold text-white ${isAmount ? 'text-xl truncate' : 'text-2xl'}`}>{value}</p>
         </div>
       </div>
     </div>
