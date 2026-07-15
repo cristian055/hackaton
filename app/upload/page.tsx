@@ -4,7 +4,7 @@ import { Header } from '@/components/header';
 import { UploadCloud, FileText, ShieldCheck, XCircle, ArrowRight, X, Camera } from 'lucide-react';
 import { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { addDocument, getRole } from '@/lib/store';
+import { addDocument, addExpenseToLegalization, getOrCreateDraftLegalization, getRole } from '@/lib/store';
 
 export default function UploadPage() {
   const router = useRouter();
@@ -45,6 +45,7 @@ export default function UploadPage() {
     setTimeout(() => {
       const role = getRole();
       const trimmedCeco = ceco.trim();
+      const draft = getOrCreateDraftLegalization();
       const record = addDocument({
         fileName: file.name,
         fileType: file.type || 'application/octet-stream',
@@ -53,6 +54,7 @@ export default function UploadPage() {
         status: 'upload',
         ...(trimmedCeco ? { ceco: trimmedCeco } : {}),
       });
+      addExpenseToLegalization(draft.id, record.id);
       router.push(`/review?doc=${encodeURIComponent(record.id)}`);
     }, 1500);
   };

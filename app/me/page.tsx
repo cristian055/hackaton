@@ -16,16 +16,24 @@ import {
   CheckCircle2,
   AlertCircle,
   Wallet,
+  CheckCircle,
 } from 'lucide-react';
 import { Header } from '@/components/header';
 import { InvoicePreview } from '@/components/invoice-preview';
 import {
   deleteDocument,
+  getActiveLegalization,
+  getLegalizationTotal,
   getRole,
   listDocuments,
+  listLegalizations,
+  parseAmount,
+  submitLegalization,
   subscribe,
   type DocumentRecord,
   type DocumentStatus,
+  type Legalization,
+  type LegalizationStatus,
   type Role,
 } from '@/lib/store';
 
@@ -92,13 +100,6 @@ function roleLabel(role: Role): string {
   return role === 'conductor' ? 'Conductor' : 'Personal';
 }
 
-function parseAmount(raw: string | undefined): number {
-  if (!raw) return 0;
-  const cleaned = raw.replace(/[^\d.,-]/g, '').replace(/\./g, '').replace(',', '.');
-  const n = parseFloat(cleaned);
-  return Number.isFinite(n) ? n : 0;
-}
-
 function formatCurrencyARS(n: number): string {
   return new Intl.NumberFormat('es-AR', {
     style: 'currency',
@@ -113,6 +114,11 @@ function MePageInner() {
 
   const [docs, setDocs] = useState<DocumentRecord[]>(() => listDocuments());
   const [role, setRoleState] = useState<Role>(() => getRole());
+  const [active, setActive] = useState<Legalization | undefined>(() => getActiveLegalization());
+  const [submitted, setSubmitted] = useState<Legalization[]>(() =>
+    listLegalizations().filter((l) => l.status === 'submitted'),
+  );
+  const [showSubmittedToast, setShowSubmittedToast] = useState(false);
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
   const highlightRef = useRef<HTMLLIElement | null>(null);
 
@@ -120,6 +126,8 @@ function MePageInner() {
     const unsubscribe = subscribe(() => {
       setDocs(listDocuments());
       setRoleState(getRole());
+      setActive(getActiveLegalization());
+      setSubmitted(listLegalizations().filter((l) => l.status === 'submitted'));
     });
     return () => {
       unsubscribe();
@@ -147,13 +155,40 @@ function MePageInner() {
     return { total, processing, gastos };
   }, [docs]);
 
+  const draft = useMemo<Legalization | undefined>(() => {
+    // `active` is referenced here so this memo recomputes whenever subscribe
+    // refreshes it (e.g., after submit or orphan migration).
+    void active;
+    return listLegalizations().find((l) => l.status === 'draft');
+  }, [active]);
+
+  const visibleDocs = useMemo(() => {
+    if (!draft) return [];
+    const inActive = new Set(draft.expenseIds);
+    const all = listLegalizations();
+    const allExpenseIds = new Set<string>();
+    for (const l of all) {
+      for (const id of l.expenseIds) allExpenseIds.add(id);
+    }
+    const orphans = docs.filter((d) => !allExpenseIds.has(d.id));
+    const inAct = docs.filter((d) => inActive.has(d.id));
+    return [...orphans, ...inAct];
+  }, [docs, draft]);
+
   const grouped = useMemo(() => {
     const out: Record<Group, DocumentRecord[]> = { Hoy: [], 'Esta semana': [], Anterior: [] };
-    for (const d of docs) {
+    for (const d of visibleDocs) {
       out[groupOf(d.uploadedAt)].push(d);
     }
     return out;
-  }, [docs]);
+  }, [visibleDocs]);
+
+  const totalInLegalization = draft?.expenseIds.length ?? 0;
+  const confirmedCount = useMemo(() => {
+    if (!draft) return 0;
+    const inActive = new Set(draft.expenseIds);
+    return docs.filter((d) => inActive.has(d.id) && d.status === 'processing').length;
+  }, [docs, draft]);
 
   const toggleExpanded = (id: string) => {
     setExpanded((prev) => ({ ...prev, [id]: !prev[id] }));
@@ -172,6 +207,15 @@ function MePageInner() {
       if (!ok) return;
     }
     deleteDocument(doc.id);
+  };
+
+  const handleSubmitLegalization = () => {
+    if (!draft) return;
+    const updated = submitLegalization(draft.id);
+    if (updated && updated.status === 'submitted') {
+      setShowSubmittedToast(true);
+      setTimeout(() => setShowSubmittedToast(false), 3000);
+    }
   };
 
   const groupOrder: Group[] = ['Hoy', 'Esta semana', 'Anterior'];
@@ -216,6 +260,17 @@ function MePageInner() {
             </div>
           </section>
 
+          {draft ? (
+            <ActiveLegalizationCard
+              draft={draft}
+              confirmedCount={confirmedCount}
+              totalInLegalization={totalInLegalization}
+              onSubmit={handleSubmitLegalization}
+            />
+          ) : (
+            <EmptyLegalizationCard />
+          )}
+
           <section className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <StatCard
               icon={<FileText className="w-5 h-5 text-primary" />}
@@ -237,11 +292,13 @@ function MePageInner() {
             />
           </section>
 
+          {submitted.length > 0 ? <SubmittedLegalizationsList items={submitted} /> : null}
+
           <section
             className="space-y-8"
             style={{ '--me-actions-col': '18rem' } as React.CSSProperties}
           >
-            {docs.length === 0 ? (
+            {visibleDocs.length === 0 ? (
               <div className="rounded-2xl border border-border bg-white p-10 text-center space-y-4">
                 <div className="w-14 h-14 mx-auto rounded-2xl bg-primary-container border border-border flex items-center justify-center text-primary">
                   <UploadCloud className="w-7 h-7" />
@@ -380,6 +437,15 @@ function MePageInner() {
           </section>
         </div>
       </main>
+
+      <div
+        className={`fixed left-1/2 -translate-x-1/2 bg-help text-primary-foreground px-8 py-4 rounded-full shadow-[0_8px_24px_rgba(48,48,48,0.14)] flex items-center gap-4 transition-all duration-500 pointer-events-none z-[100]
+          ${showSubmittedToast ? 'opacity-100 bottom-8' : 'opacity-0 bottom-5'}
+        `}
+      >
+        <CheckCircle className="w-6 h-6 text-primary-foreground" />
+        <span className="text-sm">Legalización enviada a aprobación</span>
+      </div>
     </>
   );
 }
@@ -460,6 +526,135 @@ function PreviewRow({ label, value, mono = false }: { label: string; value: stri
       <dt className="text-[10px] font-bold text-foreground-muted uppercase tracking-widest">{label}</dt>
       <dd className={`mt-1 text-foreground ${mono ? 'font-mono' : ''}`}>{value}</dd>
     </div>
+  );
+}
+
+function ActiveLegalizationCard({
+  draft,
+  confirmedCount,
+  totalInLegalization,
+  onSubmit,
+}: {
+  draft: Legalization;
+  confirmedCount: number;
+  totalInLegalization: number;
+  onSubmit: () => void;
+}) {
+  const total = getLegalizationTotal(draft.id);
+  const canSubmit = confirmedCount > 0;
+  const caption = `${confirmedCount} gasto${confirmedCount === 1 ? '' : 's'} confirmado${confirmedCount === 1 ? '' : 's'} de ${totalInLegalization} en la legalización`;
+  return (
+    <section className="relative overflow-hidden rounded-2xl border border-border bg-white p-6 sm:p-8">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <span className="text-[10px] font-bold text-primary uppercase tracking-widest">Legalización activa</span>
+          <h2 className="text-2xl sm:text-3xl font-light text-foreground mt-1">
+            <span className="font-semibold">{draft.period}</span>
+          </h2>
+        </div>
+        <LegalizationStatusChip status={draft.status} />
+      </div>
+      <div className="mt-6 sm:mt-8">
+        <p className="text-[10px] font-bold text-foreground-muted uppercase tracking-widest">Total consolidado</p>
+        <p className="text-3xl sm:text-4xl font-light text-foreground mt-2">
+          {formatCurrencyARS(total)}
+        </p>
+        <p className="text-sm text-foreground-muted mt-2">{caption}</p>
+      </div>
+      <button
+        type="button"
+        onClick={onSubmit}
+        disabled={!canSubmit}
+        className={`mt-6 w-full h-12 rounded-full bg-primary text-primary-foreground text-[12px] font-bold uppercase tracking-widest flex items-center justify-center gap-2 transition-opacity ${canSubmit ? 'hover:opacity-90' : 'opacity-30 cursor-not-allowed'}`}
+      >
+        Enviar a aprobación
+      </button>
+    </section>
+  );
+}
+
+function LegalizationStatusChip({ status }: { status: LegalizationStatus }) {
+  if (status === 'draft') {
+    return (
+      <span className="text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full border bg-alert text-on-alert border-alert">
+        Borrador
+      </span>
+    );
+  }
+  return (
+    <span className="text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full border bg-help text-on-help border-help">
+      En aprobación
+    </span>
+  );
+}
+
+function EmptyLegalizationCard() {
+  return (
+    <section className="rounded-2xl border border-border bg-white p-10 text-center space-y-4">
+      <div className="w-14 h-14 mx-auto rounded-2xl bg-primary-container border border-border flex items-center justify-center text-primary">
+        <UploadCloud className="w-7 h-7" />
+      </div>
+      <h2 className="text-xl font-light text-foreground">
+        Aún no tenés una <span className="font-semibold">legalización activa</span>
+      </h2>
+      <p className="text-sm text-foreground-muted max-w-md mx-auto">
+        Subí tu primera factura para iniciar una nueva legalización
+      </p>
+      <Link
+        href="/upload"
+        className="inline-flex items-center gap-2 h-11 px-6 rounded-full bg-primary text-primary-foreground hover:opacity-90 text-[12px] font-bold uppercase tracking-widest"
+      >
+        <UploadCloud className="w-4 h-4" />
+        Subir mi primer documento
+      </Link>
+    </section>
+  );
+}
+
+function SubmittedLegalizationsList({ items }: { items: Legalization[] }) {
+  const sorted = useMemo(
+    () =>
+      items.slice().sort((a, b) => {
+        const ta = a.submittedAt ? new Date(a.submittedAt).getTime() : new Date(a.createdAt).getTime();
+        const tb = b.submittedAt ? new Date(b.submittedAt).getTime() : new Date(b.createdAt).getTime();
+        return tb - ta;
+      }),
+    [items],
+  );
+  return (
+    <section className="space-y-3">
+      <div className="flex items-center gap-3">
+        <h2 className="text-[10px] font-bold text-foreground-muted uppercase tracking-widest">Legalizaciones enviadas</h2>
+        <div className="h-px flex-1 bg-border" />
+        <span className="text-[10px] font-semibold text-foreground-muted">{sorted.length}</span>
+      </div>
+      <ul className="space-y-3">
+        {sorted.map((l) => {
+          const total = getLegalizationTotal(l.id);
+          const submittedAt = l.submittedAt ?? l.createdAt;
+          return (
+            <li
+              key={l.id}
+              className="rounded-2xl border border-border bg-white p-4 sm:p-5 flex items-center gap-4"
+            >
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold text-foreground truncate">{l.period}</p>
+                <p className="text-[11px] text-foreground-muted mt-1">
+                  {formatDate(submittedAt)} · {formatTime(submittedAt)}
+                </p>
+              </div>
+              <span className="text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full border bg-help text-on-help border-help flex-shrink-0">
+                En aprobación
+              </span>
+              <span className="text-sm font-mono text-foreground flex-shrink-0">
+                {formatCurrencyARS(total)}
+              </span>
+              <ChevronRight className="w-4 h-4 text-foreground-muted flex-shrink-0" aria-hidden="true" />
+            </li>
+          );
+        })}
+      </ul>
+    </section>
   );
 }
 
