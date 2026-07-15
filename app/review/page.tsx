@@ -3,13 +3,15 @@
 import { Suspense, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Header } from '@/components/header';
+import { InvoicePreview } from '@/components/invoice-preview';
 import { FileText, ZoomIn, ZoomOut, RotateCw, Edit, Search, Info, CheckCircle, FileUp, RefreshCw } from 'lucide-react';
-import { getDocument, updateDocument, type DocumentRecord, type ExtractedFields } from '@/lib/store';
+import { getDocument, setDocumentCeco, updateDocument, type DocumentRecord, type ExtractedFields } from '@/lib/store';
 
 const DEMO_FIELDS: ExtractedFields = {
   fecha: '2023-10-25',
   nroFactura: '0001-00002834',
   proveedor: 'Logística del Sur S.A.',
+  cliente: 'Comfama S.A.',
   cuit: '30-71452896-1',
   nit: '900.123.456-7',
   direccion: 'Calle 100 #15-20, Edificio Norte',
@@ -48,6 +50,7 @@ function ReviewPageInner() {
       fecha: ext?.fecha ?? DEMO_FIELDS.fecha,
       nroFactura: ext?.nroFactura ?? DEMO_FIELDS.nroFactura,
       proveedor: ext?.proveedor ?? DEMO_FIELDS.proveedor,
+      cliente: ext?.cliente ?? DEMO_FIELDS.cliente,
       cuit: ext?.cuit ?? DEMO_FIELDS.cuit,
       nit: ext?.nit ?? DEMO_FIELDS.nit,
       direccion: ext?.direccion ?? DEMO_FIELDS.direccion,
@@ -81,9 +84,10 @@ function ReviewPageInner() {
         const updated = updateDocument(doc.id, {
           status: 'processing',
           extracted: fields,
-          ceco: ceco || doc.ceco,
         });
-        setDoc(updated ?? doc);
+        const finalCeco = ceco || doc.ceco || '';
+        const withCeco = setDocumentCeco(doc.id, finalCeco) ?? updated ?? doc;
+        setDoc(withCeco);
         setIsConfirmed(true);
         setShowToast(true);
         setTimeout(() => {
@@ -118,63 +122,7 @@ function ReviewPageInner() {
               <button className="p-2 hover:bg-surface-muted rounded-full transition-colors"><RotateCw className="w-4 h-4 text-foreground-muted" /></button>
             </div>
           </div>
-          <div
-            className="flex-1 flex items-center justify-center p-8 overflow-auto bg-surface-muted"
-          >
-            <div className="bg-white shadow-[0_8px_24px_rgba(48,48,48,0.14)] w-full max-w-2xl aspect-[1/1.41] p-8 flex flex-col gap-6 border border-border text-[#191c1e]">
-              <div className="flex justify-between items-start border-b border-border pb-4">
-                <div className="space-y-2">
-                  <div className="h-8 w-32 bg-neutral rounded"></div>
-                  <div className="h-4 w-48 bg-surface-muted rounded"></div>
-                </div>
-                <div className="text-right">
-                  <p className="font-bold text-lg">FACTURA</p>
-                  <p className="text-foreground-muted">N° {fields.nroFactura || '0001-00002834'}</p>
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-8">
-                <div className="space-y-4">
-                  <div className="h-3 w-full bg-surface-muted rounded"></div>
-                  <div className="h-3 w-3/4 bg-surface-muted rounded"></div>
-                  <div className="h-3 w-5/6 bg-surface-muted rounded"></div>
-                </div>
-                <div className="space-y-4">
-                  <div className="h-3 w-full bg-surface-muted rounded"></div>
-                  <div className="h-3 w-3/4 bg-surface-muted rounded"></div>
-                  <div className="h-3 w-5/6 bg-surface-muted rounded"></div>
-                </div>
-              </div>
-              <div className="flex-1 border-y border-border py-4 mt-8">
-                <table className="w-full text-xs text-left">
-                  <thead>
-                    <tr className="border-b border-border">
-                      <th className="pb-2">DESCRIPCIÓN</th>
-                      <th className="pb-2 text-right">CANT.</th>
-                      <th className="pb-2 text-right">SUBTOTAL</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr className="border-b border-surface-muted">
-                      <td className="py-2">Servicio Flete Larga Distancia</td>
-                      <td className="py-2 text-right">1</td>
-                      <td className="py-2 text-right">$450.000,00</td>
-                    </tr>
-                    <tr className="border-b border-surface-muted">
-                      <td className="py-2">Peajes Consolidado</td>
-                      <td className="py-2 text-right">1</td>
-                      <td className="py-2 text-right">$12.500,00</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-              <div className="flex justify-end pt-4">
-                <div className="w-1/2 space-y-2">
-                  <div className="flex justify-between"><span className="text-[12px] font-semibold">IVA (21%):</span><span className="font-mono text-[13px]">$97.125,00</span></div>
-                  <div className="flex justify-between border-t border-border pt-2"><span className="font-bold">TOTAL:</span><span className="font-bold font-mono text-[13px]">${fields.monto || '559.625,00'}</span></div>
-                </div>
-              </div>
-            </div>
-          </div>
+          <InvoicePreview fields={fields} fileName={doc?.fileName} />
         </section>
 
         <section className="w-full md:w-[480px] bg-white border border-border rounded-2xl overflow-y-auto flex flex-col relative">
@@ -401,6 +349,17 @@ function ReviewPageInner() {
                   type="text"
                   value={fields.totalFactura}
                   onChange={(e) => updateField('totalFactura', e.target.value)}
+                />
+              </div>
+              <div className="flex flex-col gap-2 group">
+                <label className="text-[12px] font-semibold text-foreground-muted" htmlFor="ceco_review">Centro de costo (CECO)</label>
+                <input
+                  className="bg-white border border-border p-3 rounded-xl focus:ring-2 focus:ring-help focus:border-help font-mono text-sm w-full transition-all outline-none text-foreground"
+                  id="ceco_review"
+                  type="text"
+                  spellCheck="false"
+                  value={ceco}
+                  onChange={(e) => setCeco(e.target.value)}
                 />
               </div>
             </div>

@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { Bell, HelpCircle, Edit, ArrowLeft } from 'lucide-react';
+import { Bell, HelpCircle, ArrowLeft } from 'lucide-react';
 
 interface HeaderProps {
   variant?: 'role-selection' | 'upload' | 'review' | 'me';
@@ -46,20 +46,6 @@ export function Header({ variant = 'role-selection' }: HeaderProps) {
           </>
         )}
 
-        {variant === 'upload' && (
-          <div className="hidden md:flex items-center h-8 px-4 bg-surface-muted border border-border rounded-full ml-6">
-            <Edit className="w-4 h-4 text-foreground-muted mr-2" />
-            <span className="text-[12px] font-semibold text-foreground-muted mr-1">CECO:</span>
-            <input
-              id="logiflow-upload-ceco"
-              className="bg-transparent border-none focus:ring-0 font-mono text-sm text-primary p-0 w-32 outline-none tracking-wider"
-              spellCheck="false"
-              type="text"
-              defaultValue="7040-LOG-OPS"
-            />
-          </div>
-        )}
-
         {variant === 'review' && (
            <>
             <div className="hidden md:flex h-8 w-px bg-outline mx-2"></div>
@@ -95,21 +81,6 @@ export function Header({ variant = 'role-selection' }: HeaderProps) {
           <div className="flex flex-col items-end mr-4 hidden md:flex">
             <span className="text-[12px] font-bold text-foreground">Juan Pérez</span>
             <span className="text-[10px] font-semibold text-foreground-muted uppercase tracking-wider">ID: 12.345.678</span>
-          </div>
-        )}
-
-        {variant === 'review' && (
-          <div className="flex flex-col items-end hidden md:flex">
-            <label className="text-[12px] font-semibold text-foreground-muted" htmlFor="ceco-edit">CECO</label>
-            <div className="flex items-center gap-1">
-              <input
-                className="bg-transparent border-none p-0 text-sm font-bold text-primary text-right focus:ring-0 focus:border-b focus:border-primary w-24 outline-none"
-                id="ceco-edit"
-                type="text"
-                defaultValue="AR-992-LOG"
-              />
-              <Edit className="w-3 h-3 opacity-40" />
-            </div>
           </div>
         )}
 
