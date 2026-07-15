@@ -51,6 +51,8 @@ export interface ExtractedFields {
   totalFactura: string;
 }
 
+export type DuplicateReason = 'same-legalization' | 'history' | 'indeterminate';
+
 export interface DocumentRecord {
   id: string;
   fileName: string;
@@ -61,6 +63,8 @@ export interface DocumentRecord {
   uploadedAt: string;
   ceco?: string;
   extracted?: ExtractedFields;
+  duplicateOf?: string[];
+  duplicateReason?: DuplicateReason;
 }
 
 export const STORAGE_KEY = 'logiflow.documents.v1';
@@ -203,6 +207,8 @@ export interface UpdateDocumentPatch {
   status?: DocumentStatus;
   ceco?: string;
   extracted?: ExtractedFields;
+  duplicateOf?: string[];
+  duplicateReason?: DuplicateReason;
 }
 
 export function updateDocument(id: string, patch: UpdateDocumentPatch): DocumentRecord | undefined {
@@ -215,10 +221,15 @@ export function updateDocument(id: string, patch: UpdateDocumentPatch): Document
     ...(patch.status !== undefined ? { status: patch.status } : {}),
     ...(patch.ceco !== undefined ? { ceco: patch.ceco } : {}),
     ...(patch.extracted !== undefined ? { extracted: patch.extracted } : {}),
+    ...(patch.duplicateOf !== undefined ? { duplicateOf: patch.duplicateOf } : {}),
+    ...(patch.duplicateReason !== undefined ? { duplicateReason: patch.duplicateReason } : {}),
   };
   all[idx] = next;
   writeAll(all);
   notify();
+  if (patch.extracted !== undefined) {
+    recomputeAllDuplicates();
+  }
   return next;
 }
 
@@ -227,6 +238,7 @@ export function deleteDocument(id: string): void {
   const next = all.filter((d) => d.id !== id);
   writeAll(next);
   notify();
+  recomputeAllDuplicates();
 }
 
 export function setDocumentCeco(id: string, ceco: string): DocumentRecord | undefined {
@@ -353,6 +365,7 @@ export function addExpenseToLegalization(
   all[idx] = next;
   writeAllLegalizations(all);
   notify();
+  recomputeDuplicatesForLegalization(legalizationId);
   return next;
 }
 
@@ -363,6 +376,8 @@ export function submitLegalization(id: string): Legalization | undefined {
   const current = all[idx];
   if (current.status === 'submitted') return current;
   if (current.expenseIds.length === 0) return undefined;
+  const blocking = getBlockingDuplicates(id);
+  if (blocking.length > 0) return undefined;
   const next: Legalization = {
     ...current,
     status: 'submitted',
@@ -385,6 +400,199 @@ export function getLegalizationTotal(id: string): number {
     }
   }
   return total;
+}
+
+function normalizeKey(value: string): string {
+  return value.trim().toLowerCase();
+}
+
+/**
+ * Returns the dedupe key for a doc, or null when one of the key fields is
+ * missing or only whitespace. Empty fields are treated as "indeterminate"
+ * (advisory, never blocks) — see HU-0007.
+ */
+export function duplicateKey(doc: DocumentRecord): string | null {
+  const nro = doc.extracted?.nroFactura;
+  const nit = doc.extracted?.nit;
+  if (!nro || !nit) return null;
+  const trimmedNro = nro.trim();
+  const trimmedNit = nit.trim();
+  if (!trimmedNro || !trimmedNit) return null;
+  return `${normalizeKey(trimmedNro)}|${normalizeKey(trimmedNit)}`;
+}
+
+function bucketDocsByKey(docs: DocumentRecord[]): Map<string, string[]> {
+  const buckets = new Map<string, string[]>();
+  for (const doc of docs) {
+    const key = duplicateKey(doc);
+    if (!key) continue;
+    const arr = buckets.get(key);
+    if (arr) arr.push(doc.id);
+    else buckets.set(key, [doc.id]);
+  }
+  return buckets;
+}
+
+function pairwiseDuplicates(buckets: Map<string, string[]>): Map<string, string[]> {
+  const out = new Map<string, string[]>();
+  for (const ids of buckets.values()) {
+    if (ids.length < 2) continue;
+    for (const id of ids) {
+      const others = ids.filter((x) => x !== id);
+      out.set(id, others);
+    }
+  }
+  return out;
+}
+
+/**
+ * Walks the docs of `legalizationId` and returns a map of docId -> duplicateOf
+ * ids for any two docs whose normalized (nroFactura, nit) match. Docs whose
+ * key is null are skipped (advisory, see `findDuplicatesAgainstHistory`).
+ */
+export function findDuplicatesWithinLegalization(legalizationId: string): Map<string, string[]> {
+  const leg = getLegalization(legalizationId);
+  if (!leg) return new Map();
+  const docs: DocumentRecord[] = [];
+  for (const id of leg.expenseIds) {
+    const doc = getDocument(id);
+    if (doc) docs.push(doc);
+  }
+  return pairwiseDuplicates(bucketDocsByKey(docs));
+}
+
+/**
+ * Compares each doc in `legalizationId` against every submitted legalization's
+ * expenseIds. Returns a map of docId -> ids of history docs that share the
+ * same normalized key.
+ */
+export function findDuplicatesAgainstHistory(legalizationId: string): Map<string, string[]> {
+  const target = getLegalization(legalizationId);
+  if (!target) return new Map();
+  const targetDocs: DocumentRecord[] = [];
+  for (const id of target.expenseIds) {
+    const doc = getDocument(id);
+    if (doc) targetDocs.push(doc);
+  }
+  if (targetDocs.length === 0) return new Map();
+  const allSubmitted = listLegalizations().filter((l) => l.status === 'submitted');
+  const historyIds = new Set<string>();
+  for (const l of allSubmitted) {
+    for (const id of l.expenseIds) historyIds.add(id);
+  }
+  const historyDocs: DocumentRecord[] = [];
+  for (const id of historyIds) {
+    const doc = getDocument(id);
+    if (doc) historyDocs.push(doc);
+  }
+  const historyBuckets = bucketDocsByKey(historyDocs);
+  const out = new Map<string, string[]>();
+  for (const doc of targetDocs) {
+    const key = duplicateKey(doc);
+    if (!key) continue;
+    const match = historyBuckets.get(key);
+    if (!match || match.length === 0) continue;
+    const others = match.filter((id) => id !== doc.id);
+    if (others.length > 0) out.set(doc.id, others);
+  }
+  return out;
+}
+
+/**
+ * Convenience: union of within-legalization and history duplicates, used by
+ * submit-time guard. Returns ids of docs that block sending the legalization.
+ */
+export function getBlockingDuplicates(legalizationId: string): string[] {
+  const within = findDuplicatesWithinLegalization(legalizationId);
+  const history = findDuplicatesAgainstHistory(legalizationId);
+  const out = new Set<string>();
+  for (const id of within.keys()) out.add(id);
+  for (const id of history.keys()) out.add(id);
+  return Array.from(out);
+}
+
+function sameStringSet(a: string[] | undefined, b: string[] | undefined): boolean {
+  const aa = a ?? [];
+  const bb = b ?? [];
+  if (aa.length !== bb.length) return false;
+  const sa = aa.slice().sort();
+  const sb = bb.slice().sort();
+  for (let i = 0; i < sa.length; i++) {
+    if (sa[i] !== sb[i]) return false;
+  }
+  return true;
+}
+
+/**
+ * Recomputes duplicateOf + duplicateReason for every doc in the given
+ * legalization and writes them to storage. Idempotent. 'same-legalization'
+ * wins over 'history' when both apply. Docs without a key are marked
+ * 'indeterminate' (advisory, never blocks).
+ */
+export function recomputeDuplicatesForLegalization(legalizationId: string): void {
+  const leg = getLegalization(legalizationId);
+  if (!leg) return;
+  const within = findDuplicatesWithinLegalization(legalizationId);
+  const history = findDuplicatesAgainstHistory(legalizationId);
+  const all = readAll();
+  let changed = false;
+  for (const id of leg.expenseIds) {
+    const idx = all.findIndex((d) => d.id === id);
+    if (idx === -1) continue;
+    const doc = all[idx];
+    const w = within.get(id) ?? [];
+    const h = history.get(id) ?? [];
+    let duplicateOf: string[] = [];
+    let reason: DuplicateReason | undefined;
+    if (w.length > 0) {
+      duplicateOf = Array.from(new Set([...w, ...h]));
+      reason = 'same-legalization';
+    } else if (h.length > 0) {
+      duplicateOf = h;
+      reason = 'history';
+    } else {
+      const key = duplicateKey(doc);
+      if (!key) {
+        reason = 'indeterminate';
+      }
+    }
+    const wantOf = duplicateOf.length > 0 ? duplicateOf : undefined;
+    const wantReason = duplicateOf.length > 0 ? reason : reason;
+    if (
+      !sameStringSet(doc.duplicateOf, wantOf) ||
+      (doc.duplicateReason ?? undefined) !== wantReason
+    ) {
+      all[idx] = {
+        ...doc,
+        duplicateOf: wantOf,
+        duplicateReason: wantReason,
+      };
+      changed = true;
+    }
+  }
+  if (changed) {
+    writeAll(all);
+    notify();
+  }
+}
+
+/**
+ * Idempotently recomputes duplicates for every legalization in storage.
+ * Cheap; safe to call after any mutation that may change the duplicate
+ * landscape (e.g. `deleteDocument`).
+ */
+export function recomputeAllDuplicates(): void {
+  for (const l of listLegalizations()) {
+    recomputeDuplicatesForLegalization(l.id);
+  }
+}
+
+/**
+ * Finds any legalization (draft or submitted) that references `docId` in its
+ * `expenseIds`. Used by the UI to render the source of a history duplicate.
+ */
+export function findLegalizationContainingDoc(docId: string): Legalization | undefined {
+  return listLegalizations().find((l) => l.expenseIds.includes(docId));
 }
 
 export { subscribe };
