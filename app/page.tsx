@@ -21,8 +21,8 @@ export default function RoleSelectionPage() {
       <main className="flex-grow flex items-center justify-center p-6 relative overflow-hidden bg-surface-muted">
         <div className="max-w-5xl w-full z-10">
           <div className="text-center mb-12">
-            <h1 className="text-4xl font-light text-foreground mb-2">Bienvenido al <span className="font-semibold">Portal Logístico</span></h1>
-            <p className="text-lg text-foreground-muted max-w-2xl mx-auto">Acceda a las herramientas de gestión documental y control de flota.</p>
+            <h1 className="text-4xl font-light text-foreground mb-2">Bienvenido a <span className="font-semibold">ViatiGo</span></h1>
+            <p className="text-lg text-foreground-muted max-w-2xl mx-auto">Portal para la legalización de gastos de viaje recurrentes.</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 h-[400px]">
@@ -30,10 +30,10 @@ export default function RoleSelectionPage() {
               <div className="mb-6 w-16 h-16 bg-primary-container rounded-2xl flex items-center justify-center text-primary transition-transform duration-500 group-hover:scale-110">
                 <UploadCloud className="w-8 h-8" />
               </div>
-              <h2 className="text-3xl font-light text-foreground mb-2">Cargar <span className="font-semibold">Documentos</span></h2>
-              <p className="text-sm text-foreground-muted text-center max-w-xs">Cargue manifiestos, facturas y documentos de carga para su procesamiento.</p>
+              <h2 className="text-3xl font-light text-foreground mb-2">Cargar <span className="font-semibold">Facturas</span></h2>
+              <p className="text-sm text-foreground-muted text-center max-w-xs">Cargar facuturas de alojamiento, transporte alimentación y otros  costos relacionados con  viajes.</p>
               <div className="mt-8 flex items-center gap-2 text-primary font-semibold bg-primary-container px-4 py-2 rounded-full">
-                <span>Ir a Carga</span>
+                <span>Cargar</span>
                 <ArrowRight className="w-4 h-4" />
               </div>
             </Link>
@@ -42,10 +42,10 @@ export default function RoleSelectionPage() {
               <div className="mb-6 w-16 h-16 bg-primary-container rounded-2xl flex items-center justify-center text-primary transition-transform duration-500 group-hover:scale-110">
                 <FileText className="w-8 h-8" />
               </div>
-              <h2 className="text-3xl font-light text-foreground mb-2">Mis <span className="font-semibold">Documentos</span></h2>
-              <p className="text-sm text-foreground-muted text-center max-w-xs">Consulte, revise y gestione los documentos cargados previamente.</p>
+              <h2 className="text-3xl font-light text-foreground mb-2">Cargar <span className="font-semibold">Cuenta de cobro</span></h2>
+              <p className="text-sm text-foreground-muted text-center max-w-xs">En caso de que el establecimineto no cuente con factura realizar carga de RUT y cuenta de cobro.</p>
               <div className="mt-8 flex items-center gap-2 text-primary font-semibold bg-primary-container px-4 py-2 rounded-full">
-                <span>Ir a mi Panel</span>
+                <span>Cargar</span>
                 <ArrowRight className="w-4 h-4" />
               </div>
             </Link>
