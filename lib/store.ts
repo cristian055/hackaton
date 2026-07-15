@@ -20,6 +20,7 @@ export interface ExtractedFields {
   fecha: string;
   nroFactura: string;
   proveedor: string;
+  cliente: string;
   cuit: string;
   nit: string;
   direccion: string;
@@ -197,6 +198,18 @@ export function deleteDocument(id: string): void {
   const next = all.filter((d) => d.id !== id);
   writeAll(next);
   notify();
+}
+
+export function setDocumentCeco(id: string, ceco: string): DocumentRecord | undefined {
+  const all = readAll();
+  const idx = all.findIndex((d) => d.id === id);
+  if (idx === -1) return undefined;
+  const current = all[idx];
+  const next: DocumentRecord = { ...current, ceco };
+  all[idx] = next;
+  writeAll(all);
+  notify();
+  return next;
 }
 
 export function getRole(): Role {

@@ -18,6 +18,7 @@ import {
   Wallet,
 } from 'lucide-react';
 import { Header } from '@/components/header';
+import { InvoicePreview } from '@/components/invoice-preview';
 import {
   deleteDocument,
   getRole,
@@ -230,7 +231,7 @@ function MePageInner() {
             />
             <StatCard
               icon={<Wallet className="w-5 h-5 text-primary" />}
-              label="Anticipos y Gastos"
+              label="Total de la legalización"
               value={formatCurrencyARS(stats.gastos)}
               accent="primary"
             />
@@ -322,6 +323,12 @@ function MePageInner() {
                               <div className="text-xs">
                                 <span className="sm:hidden text-[10px] font-bold uppercase tracking-widest text-foreground-muted mr-2">NIT</span>
                                 <span className="font-mono text-foreground">{nit}</span>
+                                {doc.ceco ? (
+                                  <span className="ml-2 inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest text-foreground-muted sm:ml-2">
+                                    <span className="sm:hidden">CECO</span>
+                                    <span className={`font-mono normal-case tracking-normal text-foreground ${doc.ceco ? '' : 'text-foreground-muted'}`}>{doc.ceco}</span>
+                                  </span>
+                                ) : null}
                               </div>
 
                               <div className="text-xs">
@@ -420,27 +427,30 @@ function Preview({ doc }: { doc: DocumentRecord }) {
   }
   const e = doc.extracted;
   return (
-    <dl className="pt-4 grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3 text-xs">
-      <PreviewRow label="Fecha de Emisión" value={e.fecha} />
-      <PreviewRow label="N° Factura" value={e.nroFactura} mono />
-      <PreviewRow label="Proveedor" value={e.proveedor} />
-      <PreviewRow label="CUIT" value={e.cuit} mono />
-      <PreviewRow label="NIT" value={e.nit} mono />
-      <PreviewRow label="Dirección" value={e.direccion} />
-      <PreviewRow label="Teléfono" value={e.telefono} mono />
-      <PreviewRow label="Departamento" value={e.departamento} />
-      <PreviewRow label="Municipio" value={e.municipio} />
-      <PreviewRow label="Monto Total" value={e.monto} mono />
-      <PreviewRow label="Kilometraje" value={e.kilometraje} mono />
-      <PreviewRow label="IVA 19% Base" value={e.iva19Base} mono />
-      <PreviewRow label="IVA 19% Valor" value={e.iva19Valor} mono />
-      <PreviewRow label="IVA 5% Base" value={e.iva5Base} mono />
-      <PreviewRow label="IVA 5% Valor" value={e.iva5Valor} mono />
-      <PreviewRow label="IVA 0% Base" value={e.iva0Base} mono />
-      <PreviewRow label="IVA 0% Valor" value={e.iva0Valor} mono />
-      <PreviewRow label="Total Factura" value={e.totalFactura} mono />
-      {doc.ceco ? <PreviewRow label="CECO" value={doc.ceco} mono /> : null}
-    </dl>
+    <div className="pt-4 space-y-4">
+      <InvoicePreview fields={e} fileName={doc.fileName} />
+      <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3 text-xs">
+        <PreviewRow label="Fecha de Emisión" value={e.fecha} />
+        <PreviewRow label="N° Factura" value={e.nroFactura} mono />
+        <PreviewRow label="Proveedor" value={e.proveedor} />
+        <PreviewRow label="CUIT" value={e.cuit} mono />
+        <PreviewRow label="NIT" value={e.nit} mono />
+        <PreviewRow label="Dirección" value={e.direccion} />
+        <PreviewRow label="Teléfono" value={e.telefono} mono />
+        <PreviewRow label="Departamento" value={e.departamento} />
+        <PreviewRow label="Municipio" value={e.municipio} />
+        <PreviewRow label="Monto Total" value={e.monto} mono />
+        <PreviewRow label="Kilometraje" value={e.kilometraje} mono />
+        <PreviewRow label="IVA 19% Base" value={e.iva19Base} mono />
+        <PreviewRow label="IVA 19% Valor" value={e.iva19Valor} mono />
+        <PreviewRow label="IVA 5% Base" value={e.iva5Base} mono />
+        <PreviewRow label="IVA 5% Valor" value={e.iva5Valor} mono />
+        <PreviewRow label="IVA 0% Base" value={e.iva0Base} mono />
+        <PreviewRow label="IVA 0% Valor" value={e.iva0Valor} mono />
+        <PreviewRow label="Total Factura" value={e.totalFactura} mono />
+        {doc.ceco ? <PreviewRow label="CECO" value={doc.ceco} mono /> : null}
+      </dl>
+    </div>
   );
 }
 

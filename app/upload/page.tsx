@@ -9,6 +9,7 @@ import { addDocument, getRole } from '@/lib/store';
 export default function UploadPage() {
   const router = useRouter();
   const [file, setFile] = useState<File | null>(null);
+  const [ceco, setCeco] = useState<string>('');
   const [isDragging, setIsDragging] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -43,19 +44,14 @@ export default function UploadPage() {
     setIsProcessing(true);
     setTimeout(() => {
       const role = getRole();
-      let ceco: string | undefined;
-      if (typeof document !== 'undefined') {
-        const cecoEl = document.getElementById('logiflow-upload-ceco') as HTMLInputElement | null;
-        const value = cecoEl?.value?.trim();
-        if (value) ceco = value;
-      }
+      const trimmedCeco = ceco.trim();
       const record = addDocument({
         fileName: file.name,
         fileType: file.type || 'application/octet-stream',
         fileSize: file.size,
         role,
         status: 'upload',
-        ...(ceco ? { ceco } : {}),
+        ...(trimmedCeco ? { ceco: trimmedCeco } : {}),
       });
       router.push(`/review?doc=${encodeURIComponent(record.id)}`);
     }, 1500);
@@ -79,6 +75,25 @@ export default function UploadPage() {
             onDrop={handleDrop}
             onClick={() => !file && fileInputRef.current?.click()}
           >
+            <div
+              className="absolute top-0 left-0 right-0 z-20 px-6 pt-5 pb-3 flex items-center gap-3 bg-white/80 backdrop-blur-sm border-b border-border"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <label
+                htmlFor="logiflow-upload-ceco"
+                className="text-[10px] font-bold text-foreground-muted uppercase tracking-widest whitespace-nowrap"
+              >
+                Centro de costo (CECO)
+              </label>
+              <input
+                id="logiflow-upload-ceco"
+                className="flex-1 bg-white border border-border rounded-md px-3 py-2 font-mono text-sm text-foreground focus:ring-2 focus:ring-help focus:border-help transition-all outline-none tracking-wider"
+                spellCheck="false"
+                type="text"
+                value={ceco}
+                onChange={(e) => setCeco(e.target.value)}
+              />
+            </div>
             {!file ? (
               <div className="flex flex-col items-center text-center px-6 z-10" onClick={(e) => e.stopPropagation()}>
                 <div className="w-16 h-16 bg-primary-container rounded-2xl flex items-center justify-center mb-6 transition-transform group-hover:scale-110 text-primary">
