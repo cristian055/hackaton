@@ -22,12 +22,15 @@ import { Header } from '@/components/header';
 import { InvoicePreview } from '@/components/invoice-preview';
 import {
   deleteDocument,
+  findLegalizationContainingDoc,
   getActiveLegalization,
+  getBlockingDuplicates,
   getLegalizationTotal,
   getRole,
   listDocuments,
   listLegalizations,
   parseAmount,
+  recomputeAllDuplicates,
   submitLegalization,
   subscribe,
   type DocumentRecord,
@@ -119,8 +122,15 @@ function MePageInner() {
     listLegalizations().filter((l) => l.status === 'submitted'),
   );
   const [showSubmittedToast, setShowSubmittedToast] = useState(false);
+  const [showBlockedToast, setShowBlockedToast] = useState(false);
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
   const highlightRef = useRef<HTMLLIElement | null>(null);
+
+  useEffect(() => {
+    // One-time migration: populate duplicateOf / duplicateReason for docs
+    // persisted by earlier HU-0006 builds that never had these fields.
+    recomputeAllDuplicates();
+  }, []);
 
   useEffect(() => {
     const unsubscribe = subscribe(() => {
@@ -190,6 +200,11 @@ function MePageInner() {
     return docs.filter((d) => inActive.has(d.id) && d.status === 'processing').length;
   }, [docs, draft]);
 
+  const blockingDuplicates = useMemo(
+    () => (draft ? getBlockingDuplicates(draft.id) : []),
+    [draft],
+  );
+
   const toggleExpanded = (id: string) => {
     setExpanded((prev) => ({ ...prev, [id]: !prev[id] }));
   };
@@ -211,6 +226,12 @@ function MePageInner() {
 
   const handleSubmitLegalization = () => {
     if (!draft) return;
+    const blocking = getBlockingDuplicates(draft.id);
+    if (blocking.length > 0) {
+      setShowBlockedToast(true);
+      setTimeout(() => setShowBlockedToast(false), 3000);
+      return;
+    }
     const updated = submitLegalization(draft.id);
     if (updated && updated.status === 'submitted') {
       setShowSubmittedToast(true);
@@ -265,6 +286,7 @@ function MePageInner() {
               draft={draft}
               confirmedCount={confirmedCount}
               totalInLegalization={totalInLegalization}
+              blockingDuplicates={blockingDuplicates}
               onSubmit={handleSubmitLegalization}
             />
           ) : (
@@ -399,6 +421,23 @@ function MePageInner() {
                                 >
                                   {STATUS_LABEL[doc.status]}
                                 </span>
+                                {doc.duplicateOf && doc.duplicateOf.length > 0 ? (
+                                  <span
+                                    className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full border bg-alert text-on-alert border-alert"
+                                    title="Factura duplicada detectada"
+                                  >
+                                    <AlertCircle className="w-3 h-3" aria-hidden="true" />
+                                    Duplicado
+                                  </span>
+                                ) : doc.duplicateReason === 'indeterminate' ? (
+                                  <span
+                                    className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full border bg-alert text-on-alert border-alert"
+                                    title="Sin nroFactura o nit para validar duplicados"
+                                  >
+                                    <AlertCircle className="w-3 h-3" aria-hidden="true" />
+                                    Sin datos para validar
+                                  </span>
+                                ) : null}
                                 <Link
                                   href={`/review?doc=${encodeURIComponent(doc.id)}`}
                                   className="h-9 px-4 rounded-full bg-white border border-border text-foreground hover:bg-surface-muted text-[11px] font-semibold uppercase tracking-widest flex items-center gap-1"
@@ -446,6 +485,15 @@ function MePageInner() {
         <CheckCircle className="w-6 h-6 text-primary-foreground" />
         <span className="text-sm">Legalización enviada a aprobación</span>
       </div>
+      <div
+        role="status"
+        className={`fixed left-1/2 -translate-x-1/2 bg-help text-primary-foreground px-8 py-4 rounded-full shadow-[0_8px_24px_rgba(48,48,48,0.14)] flex items-center gap-4 transition-all duration-500 pointer-events-none z-[100]
+          ${showBlockedToast ? 'opacity-100 bottom-8' : 'opacity-0 bottom-5'}
+        `}
+      >
+        <AlertCircle className="w-6 h-6 text-primary-foreground" />
+        <span className="text-sm">No se puede enviar: hay gastos duplicados</span>
+      </div>
     </>
   );
 }
@@ -483,6 +531,20 @@ function StatCard({
 }
 
 function Preview({ doc }: { doc: DocumentRecord }) {
+  const duplicateMessage = useMemo<string | null>(() => {
+    if (!doc.duplicateOf || doc.duplicateOf.length === 0) return null;
+    if (doc.duplicateReason === 'same-legalization') {
+      return 'Duplicada dentro de esta legalización';
+    }
+    if (doc.duplicateReason === 'history') {
+      const source = findLegalizationContainingDoc(doc.duplicateOf[0]);
+      const iso = source?.submittedAt ?? source?.createdAt;
+      const date = iso ? formatDate(iso) : 'una legalización anterior';
+      return `Duplicada contra historial (legalización enviada el ${date})`;
+    }
+    return null;
+  }, [doc]);
+
   if (!doc.extracted) {
     return (
       <div className="pt-4 flex items-start gap-3 text-xs text-foreground-muted">
@@ -494,6 +556,15 @@ function Preview({ doc }: { doc: DocumentRecord }) {
   const e = doc.extracted;
   return (
     <div className="pt-4 space-y-4">
+      {duplicateMessage ? (
+        <div
+          role="alert"
+          className="flex items-start gap-3 rounded-md border border-alert bg-alert text-on-alert p-4"
+        >
+          <AlertCircle className="w-5 h-5 mt-0.5 flex-shrink-0" aria-hidden="true" />
+          <p className="text-sm leading-5">{duplicateMessage}</p>
+        </div>
+      ) : null}
       <InvoicePreview fields={e} fileName={doc.fileName} />
       <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3 text-xs">
         <PreviewRow label="Fecha de Emisión" value={e.fecha} />
@@ -533,15 +604,18 @@ function ActiveLegalizationCard({
   draft,
   confirmedCount,
   totalInLegalization,
+  blockingDuplicates,
   onSubmit,
 }: {
   draft: Legalization;
   confirmedCount: number;
   totalInLegalization: number;
+  blockingDuplicates: string[];
   onSubmit: () => void;
 }) {
   const total = getLegalizationTotal(draft.id);
-  const canSubmit = confirmedCount > 0;
+  const blockingCount = blockingDuplicates.length;
+  const canSubmit = confirmedCount > 0 && blockingCount === 0;
   const caption = `${confirmedCount} gasto${confirmedCount === 1 ? '' : 's'} confirmado${confirmedCount === 1 ? '' : 's'} de ${totalInLegalization} en la legalización`;
   return (
     <section className="relative overflow-hidden rounded-2xl border border-border bg-white p-6 sm:p-8">
@@ -561,10 +635,23 @@ function ActiveLegalizationCard({
         </p>
         <p className="text-sm text-foreground-muted mt-2">{caption}</p>
       </div>
+      {blockingCount > 0 ? (
+        <div
+          role="alert"
+          className="mt-4 flex items-start gap-3 rounded-md border border-alert bg-alert text-on-alert p-4"
+        >
+          <AlertCircle className="w-5 h-5 mt-0.5 flex-shrink-0" aria-hidden="true" />
+          <p className="text-sm leading-5">
+            {blockingCount} gasto{blockingCount === 1 ? '' : 's'} con factura duplicada
+            {' '}impide{blockingCount === 1 ? '' : 'n'} el envío a aprobación.
+          </p>
+        </div>
+      ) : null}
       <button
         type="button"
         onClick={onSubmit}
         disabled={!canSubmit}
+        aria-disabled={!canSubmit}
         className={`mt-6 w-full h-12 rounded-full bg-primary text-primary-foreground text-[12px] font-bold uppercase tracking-widest flex items-center justify-center gap-2 transition-opacity ${canSubmit ? 'hover:opacity-90' : 'opacity-30 cursor-not-allowed'}`}
       >
         Enviar a aprobación
